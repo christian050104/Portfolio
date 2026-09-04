@@ -1,150 +1,167 @@
 "use client";
 
-import SectionTitle from "@/components/ui/SectionTitle";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export default function AboutSection() {
-  const [mounted, setMounted] = useState(false);
+function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const started = useRef(false);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started.current) {
+          started.current = true;
+          const duration = 2000;
+          const steps = 60;
+          const increment = target / steps;
+          let current = 0;
+          const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+              setCount(target);
+              clearInterval(timer);
+            } else {
+              setCount(Math.floor(current));
+            }
+          }, duration / steps);
+        }
+      },
+      { threshold: 0.5 }
+    );
 
-  const stats = [
-    { icon: "💼", label: "Years Experience", value: "3+" },
-    { icon: "🚀", label: "Projects Completed", value: "15+" },
-    { icon: "⚡", label: "Technologies", value: "15+" },
-    { icon: "🎯", label: "Success Rate", value: "100%" },
-  ];
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [target]);
 
-  const highlights = [
-    {
-      icon: "🎨",
-      title: "Fullstack Development",
-      description: "Building complete web applications from backend APIs to responsive frontends with modern frameworks.",
-    },
-    {
-      icon: "📱",
-      title: "Mobile Development",
-      description: "Creating cross-platform mobile apps with Flutter for iOS and Android platforms.",
-    },
-    {
-      icon: "🖥️",
-      title: "Desktop Applications",
-      description: "Developing desktop applications using Electron with real-time communication features.",
-    },
-    {
-      icon: "🤖",
-      title: "AI & Machine Learning",
-      description: "Implementing CNN models for image classification and data analysis applications.",
-    },
-  ];
+  return <span ref={ref}>{count}{suffix}</span>;
+}
 
+const highlights = [
+  {
+    icon: "🤖",
+    title: "AI & Face Recognition",
+    description: "Built Facel — a real-time face recognition system for attendance & access control using deep learning.",
+    gradient: "from-violet-500/20 to-purple-600/10",
+    border: "border-violet-500/20",
+    iconBg: "from-violet-500 to-purple-600",
+  },
+  {
+    icon: "🎓",
+    title: "EdTech Desktop Platform",
+    description: "Developed EduSphere — a full-featured cross-platform learning app with offline support & real-time comms.",
+    gradient: "from-cyan-500/20 to-blue-600/10",
+    border: "border-cyan-500/20",
+    iconBg: "from-cyan-500 to-blue-600",
+  },
+  {
+    icon: "📡",
+    title: "Live Streaming App",
+    description: "Created SnapStream — a professional broadcasting & recording desktop app with RTMP & HLS support.",
+    gradient: "from-emerald-500/20 to-teal-600/10",
+    border: "border-emerald-500/20",
+    iconBg: "from-emerald-500 to-teal-600",
+  },
+  {
+    icon: "🌐",
+    title: "Fullstack Web & Mobile",
+    description: "Delivered e-commerce, company profiles, health monitoring, and mobile apps across multiple tech stacks.",
+    gradient: "from-orange-500/20 to-amber-600/10",
+    border: "border-orange-500/20",
+    iconBg: "from-orange-500 to-amber-600",
+  },
+];
+
+const stats = [
+  { value: 3, suffix: "+", label: "Years Experience" },
+  { value: 15, suffix: "+", label: "Projects Completed" },
+  { value: 15, suffix: "+", label: "Technologies" },
+  { value: 100, suffix: "%", label: "Commitment" },
+];
+
+export default function AboutSection() {
   return (
-    <section id="about" className="space-y-10">
-      <SectionTitle title="About Me" subtitle="Who I am" />
+    <section id="about" className="space-y-14">
+      {/* Section Header */}
+      <div className="reveal text-center space-y-3">
+        <p className="text-cyan-400 text-sm font-semibold tracking-widest uppercase">About Me</p>
+        <h2 className="text-3xl md:text-5xl font-black text-white">
+          Who I <span className="gradient-text-cyan">Am</span>
+        </h2>
+        <div className="section-divider" />
+      </div>
 
-      {/* Intro Text */}
-      <div className="glass-effect rounded-2xl p-8 space-y-6">
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-blue-500 flex items-center justify-center text-2xl flex-shrink-0">
+      {/* Intro Card */}
+      <div className="reveal glass-card rounded-3xl p-8 md:p-10 space-y-5">
+        <div className="flex items-start gap-5">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center text-2xl flex-shrink-0 shadow-lg shadow-cyan-500/25">
             👋
           </div>
           <div className="space-y-4">
-            <p className="text-slate-200 text-lg leading-relaxed">
-              My name is <span className="text-emerald-400 font-semibold">Christian Jhon Pranata Panjaitan</span>, 
-              a passionate <span className="text-blue-400 font-semibold">Fullstack Developer</span> with expertise 
-              in backend, frontend, mobile, and desktop development.
+            <p className="text-slate-100 text-lg leading-relaxed font-medium">
+              I&apos;m{" "}
+              <span className="gradient-text-cyan font-bold">Christian Jhon Pranata Panjaitan</span>, a
+              passionate{" "}
+              <span className="text-white font-bold">Fullstack Developer</span> who loves turning complex
+              ideas into real, working software.
             </p>
-
-            <p className="text-slate-300 leading-relaxed">
-              I have built diverse systems ranging from <span className="text-white font-medium">e-commerce platforms</span>, 
-              <span className="text-white font-medium"> company profile websites</span>, 
-              <span className="text-white font-medium"> livestock health monitoring systems</span>, 
-              <span className="text-white font-medium"> real-time communication apps</span>, 
-              and <span className="text-white font-medium">machine learning applications</span>.
+            <p className="text-slate-400 leading-relaxed">
+              From building a{" "}
+              <span className="text-violet-300 font-semibold">Face Recognition AI system (Facel)</span> to
+              crafting a cross-platform{" "}
+              <span className="text-cyan-300 font-semibold">EdTech desktop app (EduSphere)</span> and a{" "}
+              <span className="text-emerald-300 font-semibold">
+                professional live streaming platform (SnapStream)
+              </span>{" "}
+              — I&apos;ve handled end-to-end development across Web, Mobile, Desktop, and AI.
             </p>
-
-            <p className="text-slate-300 leading-relaxed">
-              I enjoy solving complex problems, writing clean and maintainable code, and building products 
-              that genuinely help users achieve their goals.
+            <p className="text-slate-400 leading-relaxed">
+              I write clean, maintainable code and thrive on solving hard engineering challenges. Currently
+              open to full-time roles and exciting collaborations.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {stats.map((stat, idx) => (
+      {/* Stats */}
+      <div className="reveal grid grid-cols-2 md:grid-cols-4 gap-4">
+        {stats.map((s, i) => (
           <div
-            key={stat.label}
-            className={`group relative glass-effect rounded-xl p-6 text-center 
-            hover:bg-gradient-to-br hover:from-emerald-500/10 hover:to-blue-500/10 
-            hover:border-emerald-500/30 transition-all duration-300 hover:scale-105
-            ${mounted ? "animate-fade-in-up" : "opacity-0"}`}
-            style={{ animationDelay: `${idx * 0.1}s` }}
+            key={s.label}
+            className="glass-card rounded-2xl p-6 text-center group"
+            style={{ transitionDelay: `${i * 80}ms` }}
           >
-            <div className="text-4xl mb-2">{stat.icon}</div>
-            <div className="text-3xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">
-              {stat.value}
+            <div className="text-3xl md:text-4xl font-black gradient-text-cyan mb-1">
+              <AnimatedCounter target={s.value} suffix={s.suffix} />
             </div>
             <div className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
-              {stat.label}
+              {s.label}
             </div>
-            
-            {/* Glow Effect on Hover */}
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           </div>
         ))}
       </div>
 
-      {/* Highlights Grid */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {highlights. map((item, idx) => (
+      {/* Highlights */}
+      <div className="grid md:grid-cols-2 gap-5">
+        {highlights.map((item, i) => (
           <div
             key={item.title}
-            className={`group glass-effect rounded-2xl p-6 
-            hover:bg-gradient-to-br hover:from-slate-800/60 hover:to-slate-900/60 
-            hover:border-emerald-500/30 transition-all duration-300 hover:scale-[1.02]
-            ${mounted ? "animate-slide-in-left" : "opacity-0"}`}
-            style={{ animationDelay: `${idx * 0.15}s` }}
+            className={`reveal glass-card rounded-2xl p-6 border bg-gradient-to-br ${item.gradient} ${item.border}`}
+            style={{ transitionDelay: `${i * 100}ms` }}
           >
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500/20 to-blue-500/20 
-              flex items-center justify-center text-3xl flex-shrink-0 
-              group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
-                {item. icon}
+              <div
+                className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.iconBg} flex items-center justify-center text-xl flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+              >
+                {item.icon}
               </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-semibold text-white group-hover:text-emerald-400 transition-colors">
-                  {item.title}
-                </h3>
-                <p className="text-slate-400 text-sm leading-relaxed group-hover:text-slate-300 transition-colors">
-                  {item.description}
-                </p>
+              <div className="space-y-1.5">
+                <h3 className="font-bold text-white text-base">{item.title}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">{item.description}</p>
               </div>
             </div>
           </div>
         ))}
-      </div>
-
-      {/* Call to Action */}
-      <div className="glass-effect rounded-2xl p-8 text-center bg-gradient-to-r from-emerald-500/5 to-blue-500/5 border-emerald-500/20">
-        <p className="text-lg text-slate-300 mb-4">
-          Interested in working together? Let's create something amazing! 
-        </p>
-        <a
-          href="#contact"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-500 
-          hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold rounded-xl
-          shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/50
-          transition-all duration-300 hover:scale-105"
-        >
-          Get In Touch
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
-        </a>
       </div>
     </section>
   );

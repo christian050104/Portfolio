@@ -1,173 +1,275 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa";
+
+const ROLES = [
+  "Fullstack Developer",
+  "AI & ML Engineer",
+  "Desktop Developer",
+  "Mobile Developer",
+  "Problem Solver",
+];
 
 export default function HeroSection() {
   const [mounted, setMounted] = useState(false);
+  const [roleIdx, setRoleIdx] = useState(0);
+  const [displayed, setDisplayed] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const typingRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Typing effect
+  useEffect(() => {
+    const current = ROLES[roleIdx];
+    const speed = isDeleting ? 40 : 80;
+
+    typingRef.current = setTimeout(() => {
+      if (!isDeleting) {
+        setDisplayed(current.slice(0, displayed.length + 1));
+        if (displayed.length + 1 === current.length) {
+          setTimeout(() => setIsDeleting(true), 2000);
+        }
+      } else {
+        setDisplayed(current.slice(0, displayed.length - 1));
+        if (displayed.length - 1 === 0) {
+          setIsDeleting(false);
+          setRoleIdx((prev) => (prev + 1) % ROLES.length);
+        }
+      }
+    }, speed);
+
+    return () => {
+      if (typingRef.current) clearTimeout(typingRef.current);
+    };
+  }, [displayed, isDeleting, roleIdx]);
+
   return (
     <section
       id="home"
-      className="relative flex flex-col items-center text-center pt-32 pb-20 px-4 space-y-8 overflow-hidden min-h-screen justify-center"
+      className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden"
     >
-      {/* Animated Background Gradient Blobs */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }}></div>
+      {/* Background Gradient Blobs */}
+      <div className="absolute inset-0 -z-20 pointer-events-none">
+        <div
+          className="absolute top-1/4 -left-1/4 w-[600px] h-[600px] rounded-full opacity-20"
+          style={{
+            background: "radial-gradient(circle, #06b6d4 0%, transparent 70%)",
+            animation: "floatSlow 10s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="absolute bottom-1/4 -right-1/4 w-[500px] h-[500px] rounded-full opacity-15"
+          style={{
+            background: "radial-gradient(circle, #8b5cf6 0%, transparent 70%)",
+            animation: "floatSlow 12s ease-in-out infinite reverse",
+          }}
+        />
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-10"
+          style={{
+            background: "radial-gradient(circle, #10b981 0%, transparent 70%)",
+            animation: "floatSlow 8s ease-in-out infinite 2s",
+          }}
+        />
       </div>
 
-      {/* Profile Photo with Animated Glow */}
+      {/* Grid pattern */}
       <div
-        className={`relative w-48 h-48 transition-all duration-1000 ${
-          mounted ? "opacity-100 scale-100" : "opacity-0 scale-90"
-        }`}
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 rounded-full blur-2xl opacity-60 animate-pulse"></div>
-        <div className="relative w-full h-full">
-          <Image
-            src="/jhon.jpg"
-            alt="Christian Jhon Pranata Panjaitan"
-            fill
-            className="rounded-full object-cover shadow-2xl border-4 border-emerald-500/40 relative z-10"
-            priority
-          />
+        className="absolute inset-0 -z-10 opacity-[0.03]"
+        style={{
+          backgroundImage: `linear-gradient(rgba(6,182,212,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.5) 1px, transparent 1px)`,
+          backgroundSize: "60px 60px",
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center gap-8 pt-24">
+        
+        {/* Open to Work Badge */}
+        <div
+          className={`transition-all duration-700 ${
+            mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+          }`}
+        >
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-medium">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            Available for new opportunities
+          </div>
+        </div>
+
+        {/* Profile Photo */}
+        <div
+          className={`relative transition-all duration-1000 delay-100 ${
+            mounted ? "opacity-100 scale-100" : "opacity-0 scale-90"
+          }`}
+        >
+          {/* Rotating Ring */}
+          <div
+            className="absolute inset-0 rounded-full"
+            style={{
+              background: "conic-gradient(from 0deg, #06b6d4, #8b5cf6, #10b981, #06b6d4)",
+              padding: "3px",
+              borderRadius: "9999px",
+              animation: "rotate360 6s linear infinite",
+            }}
+          >
+            <div className="w-full h-full rounded-full bg-[#050810]" />
+          </div>
+
+          {/* Glow */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-500 via-violet-500 to-emerald-500 blur-2xl opacity-30 scale-110" />
+
+          {/* Photo */}
+          <div className="relative w-44 h-44 md:w-52 md:h-52 rounded-full overflow-hidden border-2 border-white/10">
+            <Image
+              src="/jhon.jpg"
+              alt="Christian Jhon Pranata Panjaitan"
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
+
+        {/* Name & Role */}
+        <div
+          className={`space-y-4 transition-all duration-1000 delay-200 ${
+            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight">
+            Christian Jhon
+            <br />
+            <span className="shimmer-text">Pranata Panjaitan</span>
+          </h1>
+
+          {/* Typing Role */}
+          <div className="flex items-center justify-center gap-2 text-xl md:text-2xl font-semibold text-slate-300 h-8">
+            <span className="text-cyan-400">&lt;</span>
+            <span className="gradient-text-cyan min-w-[240px] text-left">
+              {displayed}
+              <span className="animate-blink text-cyan-400 ml-0.5">|</span>
+            </span>
+            <span className="text-cyan-400">/&gt;</span>
+          </div>
+        </div>
+
+        {/* Bio */}
+        <p
+          className={`max-w-2xl text-slate-400 text-base md:text-lg leading-relaxed transition-all duration-1000 delay-300 ${
+            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
+          Building{" "}
+          <span className="text-cyan-300 font-semibold">intelligent systems</span> — from face recognition AI to
+          live streaming platforms and cross-platform desktop apps. 3+ years crafting production-grade software.
+        </p>
+
+        {/* Tech Pills */}
+        <div
+          className={`flex flex-wrap justify-center gap-2 max-w-xl transition-all duration-1000 delay-400 ${
+            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
+          {["🤖 AI & Face Recognition", "🌐 Fullstack Web", "🖥️ Desktop (Electron)", "📱 Mobile (Flutter)"].map(
+            (tag) => (
+              <span
+                key={tag}
+                className="px-3 py-1.5 text-xs font-medium rounded-full bg-slate-800/70 border border-slate-700/60 text-slate-300 hover:border-cyan-500/40 hover:text-cyan-300 transition-all duration-300 cursor-default"
+              >
+                {tag}
+              </span>
+            )
+          )}
+        </div>
+
+        {/* Social + CTA */}
+        <div
+          className={`flex flex-col sm:flex-row items-center gap-4 transition-all duration-1000 delay-500 ${
+            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
+          {/* Social Icons */}
+          <div className="flex gap-3">
+            {[
+              {
+                href: "https://github.com/christian050104",
+                icon: <FaGithub className="w-5 h-5" />,
+                label: "GitHub",
+                hover: "hover:border-slate-400 hover:text-white hover:shadow-slate-500/20",
+              },
+              {
+                href: "https://www.linkedin.com/in/christian-jhon-pranata-panjaitan-513364267/",
+                icon: <FaLinkedin className="w-5 h-5" />,
+                label: "LinkedIn",
+                hover: "hover:border-blue-400 hover:text-blue-300 hover:shadow-blue-500/20",
+              },
+              {
+                href: "https://www.instagram.com/pranata_ex21/",
+                icon: <FaInstagram className="w-5 h-5" />,
+                label: "Instagram",
+                hover: "hover:border-pink-400 hover:text-pink-300 hover:shadow-pink-500/20",
+              },
+            ].map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.label}
+                className={`p-3 rounded-xl bg-slate-800/60 border border-slate-700/50 text-slate-400 transition-all duration-300 hover:scale-110 hover:-translate-y-1 hover:shadow-lg ${s.hover}`}
+              >
+                {s.icon}
+              </a>
+            ))}
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex gap-3">
+            <a
+              href="#featured"
+              className="btn-primary px-6 py-3 text-sm font-semibold flex items-center gap-2"
+            >
+              View My Work
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+            <a
+              href="#contact"
+              className="btn-outline px-6 py-3 text-sm font-semibold"
+            >
+              Hire Me
+            </a>
+          </div>
         </div>
       </div>
 
-      {/* Name with Staggered Animation */}
+      {/* Scroll Indicator */}
       <div
-        className={`space-y-3 transition-all duration-1000 delay-200 ${
-          mounted ?  "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        className={`absolute bottom-8 left-1/2 -translate-x-1/2 transition-all duration-1000 delay-700 ${
+          mounted ? "opacity-100" : "opacity-0"
         }`}
       >
-        <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
-          Christian Jhon Pranata Panjaitan
-        </h1>
-
-        {/* Animated Role Badges */}
-        <div className="flex flex-wrap justify-center gap-3 text-sm md:text-base">
-          <span className="px-5 py-2 bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 border border-emerald-500/40 rounded-full text-emerald-300 font-medium hover:scale-110 transition-transform duration-300 cursor-default">
-            💻 Fullstack Developer
+        <a href="#about" className="flex flex-col items-center gap-2 group">
+          <span className="text-xs text-slate-500 group-hover:text-slate-400 transition-colors tracking-widest uppercase">
+            Scroll
           </span>
-          <span className="px-5 py-2 bg-gradient-to-r from-blue-500/20 to-blue-600/20 border border-blue-500/40 rounded-full text-blue-300 font-medium hover:scale-110 transition-transform duration-300 cursor-default">
-            📱 Mobile Developer
-          </span>
-          <span className="px-5 py-2 bg-gradient-to-r from-purple-500/20 to-purple-600/20 border border-purple-500/40 rounded-full text-purple-300 font-medium hover:scale-110 transition-transform duration-300 cursor-default">
-            🖥️ Desktop Developer
-          </span>
-        </div>
-      </div>
-
-      {/* Bio with Better Typography */}
-      <p
-        className={`max-w-3xl text-slate-300 text-base md:text-lg leading-relaxed transition-all duration-1000 delay-400 ${
-          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-        }`}
-      >
-        Building modern, scalable applications across{" "}
-        <span className="text-emerald-400 font-semibold">Web</span>,{" "}
-        <span className="text-blue-400 font-semibold">Mobile</span>, and{" "}
-        <span className="text-purple-400 font-semibold">Desktop</span>. 
-        <br className="hidden md:block" />
-        Experienced with{" "}
-        <span className="font-semibold text-white">
-          Laravel • Django • Express • React • Flutter • Electron
-        </span>
-        , WebRTC, Machine Learning, and Cloud Architecture.
-      </p>
-
-      {/* Social Icons - MENGGUNAKAN REACT ICONS */}
-      <div
-        className={`flex gap-4 transition-all duration-1000 delay-600 ${
-          mounted ?  "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-        }`}
-      >
-        {/* GitHub */}
-        <a
-          href="https://github.com/christian050104"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group relative p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-emerald-400 hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-300 hover:scale-110 hover:-translate-y-1"
-          aria-label="GitHub"
-        >
-          <FaGithub className="w-7 h-7 text-slate-300 group-hover:text-emerald-300 transition-colors" />
+          <div className="w-5 h-8 rounded-full border border-slate-700 flex items-start justify-center p-1 group-hover:border-cyan-500/40 transition-colors">
+            <div
+              className="w-1 h-1.5 rounded-full bg-cyan-400"
+              style={{ animation: "float 1.5s ease-in-out infinite" }}
+            />
+          </div>
         </a>
-
-        {/* LinkedIn */}
-        <a
-          href="https://www.linkedin.com/in/christian-jhon-pranata-panjaitan-513364267/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group relative p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-blue-400 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-300 hover:scale-110 hover:-translate-y-1"
-          aria-label="LinkedIn"
-        >
-          <FaLinkedin className="w-7 h-7 text-slate-300 group-hover:text-blue-300 transition-colors" />
-        </a>
-
-        {/* Instagram */}
-        <a
-          href="https://www.instagram.com/pranata_ex21/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group relative p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-pink-400 hover:shadow-xl hover:shadow-pink-500/30 transition-all duration-300 hover:scale-110 hover:-translate-y-1"
-          aria-label="Instagram"
-        >
-          <FaInstagram className="w-7 h-7 text-slate-300 group-hover:text-pink-300 transition-colors" />
-        </a>
-      </div>
-
-      {/* CTA Buttons */}
-      <div
-        className={`flex flex-col sm:flex-row gap-4 pt-4 transition-all duration-1000 delay-700 ${
-          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-        }`}
-      >
-        <a
-          href="#projects"
-          className="group relative px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold text-lg shadow-lg shadow-emerald-500/40 hover:shadow-2xl hover:shadow-emerald-500/60 transition-all duration-300 hover:scale-105 overflow-hidden"
-        >
-          <span className="relative z-10 flex items-center gap-2">
-            View My Projects
-            <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </span>
-          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-        </a>
-
-        <a
-          href="#contact"
-          className="group relative px-8 py-4 rounded-xl border-2 border-emerald-400/50 text-emerald-300 hover:bg-emerald-400 hover:text-slate-950 hover:border-emerald-400 font-semibold text-lg transition-all duration-300 hover:scale-105"
-        >
-          <span className="flex items-center gap-2">
-            Contact Me
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002. 22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </span>
-        </a>
-      </div>
-
-      {/* Scroll Down Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <svg
-          className="w-6 h-6 text-emerald-400"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-        </svg>
       </div>
     </section>
   );
