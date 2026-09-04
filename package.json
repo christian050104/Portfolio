@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"next dev\" \"wait-on --interval 500 --timeout 30000 --delay 2000 http://localhost:3000 && node -e \\\"require('child_process').exec('start http://localhost:3000')\\\"\"",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -20,9 +20,12 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "concurrently": "^10.0.5",
     "eslint": "^9",
     "eslint-config-next": "16.0.6",
+    "open-cli": "^9.0.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wait-on": "^9.1.0"
   }
 }

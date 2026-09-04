@@ -1,41 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
-function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const started = useRef(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !started.current) {
-          started.current = true;
-          const duration = 2000;
-          const steps = 60;
-          const increment = target / steps;
-          let current = 0;
-          const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-              setCount(target);
-              clearInterval(timer);
-            } else {
-              setCount(Math.floor(current));
-            }
-          }, duration / steps);
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [target]);
-
-  return <span ref={ref}>{count}{suffix}</span>;
-}
 
 const highlights = [
   {
@@ -72,16 +36,9 @@ const highlights = [
   },
 ];
 
-const stats = [
-  { value: 3, suffix: "+", label: "Years Experience" },
-  { value: 15, suffix: "+", label: "Projects Completed" },
-  { value: 15, suffix: "+", label: "Technologies" },
-  { value: 100, suffix: "%", label: "Commitment" },
-];
-
 export default function AboutSection() {
   return (
-    <section id="about" className="space-y-14">
+    <section id="about" className="space-y-8">
       {/* Section Header */}
       <div className="reveal text-center space-y-3">
         <p className="text-cyan-400 text-sm font-semibold tracking-widest uppercase">About Me</p>
@@ -123,31 +80,12 @@ export default function AboutSection() {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="reveal grid grid-cols-2 md:grid-cols-4 gap-4">
-        {stats.map((s, i) => (
-          <div
-            key={s.label}
-            className="glass-card rounded-2xl p-6 text-center group"
-            style={{ transitionDelay: `${i * 80}ms` }}
-          >
-            <div className="text-3xl md:text-4xl font-black gradient-text-cyan mb-1">
-              <AnimatedCounter target={s.value} suffix={s.suffix} />
-            </div>
-            <div className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
-              {s.label}
-            </div>
-          </div>
-        ))}
-      </div>
-
       {/* Highlights */}
       <div className="grid md:grid-cols-2 gap-5">
         {highlights.map((item, i) => (
           <div
             key={item.title}
-            className={`reveal glass-card rounded-2xl p-6 border bg-gradient-to-br ${item.gradient} ${item.border}`}
-            style={{ transitionDelay: `${i * 100}ms` }}
+            className={`glass-card rounded-2xl p-6 border bg-gradient-to-br ${item.gradient} ${item.border}`}
           >
             <div className="flex items-start gap-4">
               <div

@@ -21,7 +21,7 @@ export default function Home() {
       <main>
         <HeroSection />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-32 py-16">
+          <div className="space-y-20 py-16">
             <AboutSection />
             <SkillsSection />
             <ExperienceSection />

@@ -130,10 +130,11 @@ export default function HeroSection() {
           {/* Photo */}
           <div className="relative w-44 h-44 md:w-52 md:h-52 rounded-full overflow-hidden border-2 border-white/10">
             <Image
-              src="/jhon.jpg"
+              src="/jhon.jpeg"
               alt="Christian Jhon Pranata Panjaitan"
               fill
-              className="object-cover"
+              sizes="(max-width: 768px) 176px, 208px"
+              className="object-cover object-[center_15%]"
               priority
             />
           </div>
