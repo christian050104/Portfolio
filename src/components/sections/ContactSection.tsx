@@ -1,102 +1,191 @@
 "use client";
 
+import {
+  LuMail,
+  LuCopy,
+  LuCheck,
+  LuExternalLink,
+  LuFileText,
+  LuArrowUp,
+} from "react-icons/lu";
+import { FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa";
+import { useAppPreferences, CONTACT_EMAIL } from "@/context/AppPreferencesContext";
+
 export default function ContactSection() {
-  const contacts = [
+  const { locale, copyEmail, emailCopied, openResume } = useAppPreferences();
+  const isId = locale === "id";
+
+  const socialProfiles = [
     {
-      icon: "📧",
-      title: "Email",
-      value: "christianjppanjaitan@gmail.com",
-      link: "mailto:christianjppanjaitan@gmail.com",
-      gradient: "from-emerald-500 to-teal-500",
-      border: "border-emerald-500/25",
-      desc: "Drop me an email anytime",
-    },
-    {
-      icon: "💼",
       title: "LinkedIn",
-      value: "christian-jhon-pranata-panjaitan",
-      link: "https://www.linkedin.com/in/christian-jhon-pranata-panjaitan-513364267/",
-      gradient: "from-blue-500 to-cyan-500",
-      border: "border-blue-500/25",
-      desc: "Let's connect professionally",
+      sub: isId ? "Koneksi & pesan profesional HRD" : "Professional recruiter messaging",
+      value: "in/christian-jhon-pranata-panjaitan",
+      href: "https://www.linkedin.com/in/christian-jhon-pranata-panjaitan-513364267/",
+      icon: <FaLinkedin className="w-5 h-5 text-sky-500" />,
     },
     {
-      icon: "🐙",
       title: "GitHub",
+      sub: isId ? "Repositori kode & dokumentasi proyek" : "Source code & project repositories",
       value: "github.com/christian050104",
-      link: "https://github.com/christian050104",
-      gradient: "from-slate-500 to-slate-600",
-      border: "border-slate-500/25",
-      desc: "Check out my repositories",
+      href: "https://github.com/christian050104",
+      icon: <FaGithub className="w-5 h-5 theme-heading" />,
+    },
+    {
+      title: "Instagram",
+      sub: isId ? "Media sosial personal" : "Personal social profile",
+      value: "@pranata_ex21",
+      href: "https://www.instagram.com/pranata_ex21/",
+      icon: <FaInstagram className="w-5 h-5 text-pink-500" />,
     },
   ];
 
   return (
-    <section id="contact" className="space-y-12 pb-20">
+    <section id="contact" className="space-y-12 pb-16">
       {/* Header */}
       <div className="reveal text-center space-y-3">
-        <p className="text-cyan-400 text-sm font-semibold tracking-widest uppercase">Contact</p>
-        <h2 className="text-3xl md:text-5xl font-black text-white">
-          Let&apos;s <span className="gradient-text-cyan">Connect</span>
+        <p className="theme-cyan-text text-xs font-mono-code font-semibold tracking-widest uppercase">
+          {isId ? "Mari Terhubung" : "Get in Touch"}
+        </p>
+        <h2 className="text-3xl md:text-4xl font-extrabold theme-heading">
+          {isId ? (
+            <>
+              Tertarik Mengajak Saya{" "}
+              <span className="gradient-text-cyan">Bergabung di Tim Anda?</span>
+            </>
+          ) : (
+            <>
+              Ready to <span className="gradient-text-cyan">Build Impactful Software</span> Together?
+            </>
+          )}
         </h2>
-        <p className="text-slate-400 max-w-md mx-auto text-sm">
-          I&apos;m open to new opportunities. Reach out via email or check my work on GitHub.
+        <p className="theme-muted text-sm max-w-xl mx-auto">
+          {isId
+            ? "Silakan hubungi saya melalui email atau terhubung langsung di LinkedIn dan GitHub. Saya terbuka untuk peluang kerja Full-time, Remote, maupun kolaborasi proyek."
+            : "Reach out directly via email or connect on LinkedIn and GitHub. Open to Full-time roles, Remote opportunities, and engineering collaborations."}
         </p>
         <div className="section-divider" />
       </div>
 
-      {/* Availability Badge */}
-      <div className="reveal flex justify-center">
-        <div className="flex items-center gap-3 px-6 py-3 rounded-full glass-card border border-emerald-500/25 bg-emerald-500/5">
-          <div className="relative flex-shrink-0">
-            <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full" />
-            <div className="absolute inset-0 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping-slow" />
+      {/* Centered Contact Showcase */}
+      <div className="reveal max-w-4xl mx-auto space-y-5">
+        {/* Primary Direct Email Card */}
+        <div className="bento-card rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center theme-emerald-text flex-shrink-0">
+              <LuMail className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-2">
+                <span className="text-xs font-semibold theme-muted">
+                  {isId ? "Email Resmi Rekrutmen & Kolaborasi" : "Primary Direct Email"}
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 theme-emerald-text border border-emerald-500/25">
+                  {isId ? "Aktif" : "Active"}
+                </span>
+              </div>
+              <p className="text-lg sm:text-xl font-extrabold theme-heading break-all">
+                {CONTACT_EMAIL}
+              </p>
+              <p className="text-xs theme-muted">
+                {isId
+                  ? "Klik salin untuk menyalin alamat email atau kirim pesan langsung."
+                  : "Copy email address in one click or launch your mail client directly."}
+              </p>
+            </div>
           </div>
-          <p className="text-sm font-semibold text-white">Open to new opportunities</p>
-          <span className="text-slate-400 text-xs">· Full-time & Freelance</span>
+
+          <div className="flex flex-wrap items-center justify-center gap-2.5 flex-shrink-0">
+            <button
+              onClick={copyEmail}
+              className="btn-primary py-3 px-5 text-xs sm:text-sm inline-flex items-center gap-2 cursor-pointer"
+            >
+              {emailCopied ? (
+                <LuCheck className="w-4 h-4" />
+              ) : (
+                <LuCopy className="w-4 h-4" />
+              )}
+              <span>
+                {emailCopied
+                  ? isId
+                    ? "Email Tersalin!"
+                    : "Email Copied!"
+                  : isId
+                  ? "Salin Email"
+                  : "Copy Email"}
+              </span>
+            </button>
+
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="btn-secondary py-3 px-4 text-xs sm:text-sm inline-flex items-center gap-2"
+            >
+              <LuMail className="w-4 h-4 theme-cyan-text" />
+              <span>{isId ? "Kirim Email" : "Send Email"}</span>
+            </a>
+
+            <button
+              onClick={openResume}
+              className="btn-secondary py-3 px-4 text-xs sm:text-sm inline-flex items-center gap-2 cursor-pointer"
+            >
+              <LuFileText className="w-4 h-4 theme-cyan-text" />
+              <span>{isId ? "Lihat CV" : "View CV"}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 3-Column Social & Code Channels */}
+        <div className="grid sm:grid-cols-3 gap-4">
+          {socialProfiles.map((item) => (
+            <a
+              key={item.title}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bento-card bento-card-interactive rounded-2xl p-5 flex flex-col justify-between gap-4 group"
+            >
+              <div className="flex items-center justify-between">
+                <div className="w-11 h-11 rounded-xl surface-pill flex items-center justify-center">
+                  {item.icon}
+                </div>
+                <LuExternalLink className="w-4 h-4 theme-muted group-hover:theme-cyan-text transition-colors" />
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-base font-bold theme-heading group-hover:theme-cyan-text transition-colors">
+                  {item.title}
+                </p>
+                <p className="text-xs theme-muted">{item.sub}</p>
+                <p className="text-xs font-mono-code theme-cyan-text truncate pt-1">
+                  {item.value}
+                </p>
+              </div>
+            </a>
+          ))}
         </div>
       </div>
 
-      {/* Contact Cards */}
-      <div className="reveal flex flex-col sm:flex-row justify-center gap-5 max-w-2xl mx-auto">
-        {contacts.map((c) => (
-          <a
-            key={c.title}
-            href={c.link}
-            target={c.link.startsWith("http") ? "_blank" : undefined}
-            rel={c.link.startsWith("http") ? "noopener noreferrer" : undefined}
-            className={`group flex-1 glass-card rounded-2xl p-7 border ${c.border} flex flex-col items-center text-center gap-4`}
-          >
-            <div
-              className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${c.gradient} flex items-center justify-center text-3xl shadow-lg group-hover:scale-110 transition-transform duration-300`}
-            >
-              {c.icon}
-            </div>
-            <div className="space-y-1">
-              <p className="font-bold text-white text-lg group-hover:text-cyan-300 transition-colors">
-                {c.title}
-              </p>
-              <p className="text-xs text-slate-500">{c.desc}</p>
-              <p className="text-sm text-slate-300 font-medium break-all">{c.value}</p>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-slate-500 group-hover:text-cyan-400 transition-colors mt-auto">
-              <span>Open</span>
-              <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </div>
-          </a>
-        ))}
-      </div>
-
       {/* Footer */}
-      <div className="reveal border-t border-slate-800 pt-8 text-center space-y-1.5">
-        <p className="text-slate-400 text-sm">
-          Crafted with <span className="text-red-400">❤️</span> by{" "}
-          <span className="gradient-text-cyan font-semibold">Christian Jhon Pranata Panjaitan</span>
-        </p>
-        <p className="text-slate-600 text-xs">© 2025 · All rights reserved</p>
-      </div>
+      <footer className="reveal pt-8 border-t border-[var(--border-subtle)] flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="text-center sm:text-left space-y-1">
+          <p className="text-sm font-bold theme-heading">
+            Christian Jhon Pranata Panjaitan
+          </p>
+          <p className="text-xs theme-muted">
+            © {new Date().getFullYear()} ·{" "}
+            {isId
+              ? "Dirancang untuk kejelasan, kecepatan, dan kenyamanan eksplorasi."
+              : "Engineered for clarity, speed, and effortless exploration."}
+          </p>
+        </div>
+
+        <a
+          href="#home"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl surface-pill text-xs font-semibold theme-body hover:theme-cyan-text transition-colors"
+        >
+          <span>{isId ? "Kembali ke Atas" : "Back to Top"}</span>
+          <LuArrowUp className="w-3.5 h-3.5" />
+        </a>
+      </footer>
     </section>
   );
 }

@@ -19,7 +19,7 @@ const techStackMap: { [key: string]: string[] } = {
   "Compro AGS": ["Laravel", "MySQL", "JavaScript"],
   "EduSnap": ["Express", "React", "Electron", "Socket.IO"],
   "SnapStream": ["Express", "Electron", "WebRTC"],
-  "Klasifikasi Kotoran Ayam": ["Python", "Flask", "TensorFlow", "CNN"],
+  "FaceLog": ["Python", "Django", "React", "OpenCV"],
 };
 
 const categoryColors: { [key: string]: string } = {

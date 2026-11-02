@@ -3,42 +3,61 @@
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import { FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa";
+import {
+  LuArrowRight,
+  LuFileText,
+  LuCopy,
+  LuCheck,
+  LuShieldCheck,
+  LuLayers,
+  LuCpu,
+  LuSparkles,
+} from "react-icons/lu";
+import { useAppPreferences, CONTACT_EMAIL } from "@/context/AppPreferencesContext";
+import TechIcon from "@/components/ui/TechIcon";
 
-const ROLES = [
-  "Fullstack Developer",
-  "AI & ML Engineer",
-  "Desktop Developer",
-  "Mobile Developer",
-  "Problem Solver",
-];
+const ROLES_BY_LOCALE = {
+  id: [
+    "IT Engineer — Riset & Pengembangan",
+    "Fullstack Software Engineer",
+    "AI & Computer Vision Builder",
+    "Cross-Platform Desktop Architect",
+  ],
+  en: [
+    "IT Engineer — Research & Development",
+    "Fullstack Software Engineer",
+    "AI & Computer Vision Builder",
+    "Cross-Platform Desktop Architect",
+  ],
+};
+
+const CORE_BADGES = ["Laravel", "Django", "React.js", "Electron", "Flutter", "Python"];
 
 export default function HeroSection() {
-  const [mounted, setMounted] = useState(false);
+  const { locale, openResume, copyEmail, emailCopied } = useAppPreferences();
   const [roleIdx, setRoleIdx] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const typingRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Typing effect
-  useEffect(() => {
-    const current = ROLES[roleIdx];
-    const speed = isDeleting ? 40 : 80;
+    const roles = ROLES_BY_LOCALE[locale];
+    const current = roles[roleIdx % roles.length];
+    const speed = isDeleting ? 35 : 70;
 
     typingRef.current = setTimeout(() => {
       if (!isDeleting) {
-        setDisplayed(current.slice(0, displayed.length + 1));
-        if (displayed.length + 1 === current.length) {
-          setTimeout(() => setIsDeleting(true), 2000);
+        const nextText = current.slice(0, displayed.length + 1);
+        setDisplayed(nextText);
+        if (nextText.length === current.length) {
+          typingRef.current = setTimeout(() => setIsDeleting(true), 2200);
         }
       } else {
-        setDisplayed(current.slice(0, displayed.length - 1));
-        if (displayed.length - 1 === 0) {
+        const nextText = current.slice(0, Math.max(0, displayed.length - 1));
+        setDisplayed(nextText);
+        if (nextText.length === 0) {
           setIsDeleting(false);
-          setRoleIdx((prev) => (prev + 1) % ROLES.length);
+          setRoleIdx((prev) => (prev + 1) % roles.length);
         }
       }
     }, speed);
@@ -46,231 +65,291 @@ export default function HeroSection() {
     return () => {
       if (typingRef.current) clearTimeout(typingRef.current);
     };
-  }, [displayed, isDeleting, roleIdx]);
+  }, [displayed, isDeleting, roleIdx, locale]);
+
+  const isId = locale === "id";
+
+  const metrics = [
+    {
+      value: "3+",
+      label: isId ? "Tahun Pengalaman" : "Years Coding & Building",
+      sub: isId ? "Pengembangan End-to-End" : "End-to-End Software Delivery",
+    },
+    {
+      value: "7+",
+      label: isId ? "Sistem Terbangun" : "Production Systems",
+      sub: isId ? "Dari AI hingga E-Commerce" : "Spanning AI to E-Commerce",
+    },
+    {
+      value: "4",
+      label: isId ? "Ekosistem Platform" : "Target Platforms",
+      sub: "Web · Desktop · Mobile · AI",
+    },
+    {
+      value: "80+",
+      label: isId ? "Modul Fitur Nyata" : "Feature Modules Shipped",
+      sub: isId ? "Terdokumentasi & Teruji" : "Documented & Verified",
+    },
+  ];
 
   return (
     <section
       id="home"
-      className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden"
+      className="relative pt-28 pb-12 md:pt-36 md:pb-20 overflow-hidden"
     >
-      {/* Background Gradient Blobs */}
-      <div className="absolute inset-0 -z-20 pointer-events-none">
-        <div
-          className="absolute top-1/4 -left-1/4 w-[600px] h-[600px] rounded-full opacity-20"
-          style={{
-            background: "radial-gradient(circle, #06b6d4 0%, transparent 70%)",
-            animation: "floatSlow 10s ease-in-out infinite",
-          }}
-        />
-        <div
-          className="absolute bottom-1/4 -right-1/4 w-[500px] h-[500px] rounded-full opacity-15"
-          style={{
-            background: "radial-gradient(circle, #8b5cf6 0%, transparent 70%)",
-            animation: "floatSlow 12s ease-in-out infinite reverse",
-          }}
-        />
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-10"
-          style={{
-            background: "radial-gradient(circle, #10b981 0%, transparent 70%)",
-            animation: "floatSlow 8s ease-in-out infinite 2s",
-          }}
-        />
-      </div>
-
-      {/* Grid pattern */}
+      {/* Subtle Grid & Ambient Glows */}
+      <div className="absolute inset-0 -z-10 bg-grid-pattern pointer-events-none" />
       <div
-        className="absolute inset-0 -z-10 opacity-[0.03]"
-        style={{
-          backgroundImage: `linear-gradient(rgba(6,182,212,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.5) 1px, transparent 1px)`,
-          backgroundSize: "60px 60px",
-        }}
+        className="absolute -top-24 -left-24 w-[480px] h-[480px] rounded-full opacity-20 blur-3xl -z-10 pointer-events-none"
+        style={{ background: "radial-gradient(circle, #06b6d4 0%, transparent 70%)" }}
+      />
+      <div
+        className="absolute top-1/4 -right-24 w-[460px] h-[460px] rounded-full opacity-15 blur-3xl -z-10 pointer-events-none"
+        style={{ background: "radial-gradient(circle, #8b5cf6 0%, transparent 70%)" }}
       />
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center gap-8 pt-24">
-        
-        {/* Open to Work Badge */}
-        <div
-          className={`transition-all duration-700 ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
-          }`}
-        >
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-medium">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            Available for new opportunities
-          </div>
-        </div>
-
-        {/* Profile Photo */}
-        <div
-          className={`relative transition-all duration-1000 delay-100 ${
-            mounted ? "opacity-100 scale-100" : "opacity-0 scale-90"
-          }`}
-        >
-          {/* Rotating Ring */}
-          <div
-            className="absolute inset-0 rounded-full"
-            style={{
-              background: "conic-gradient(from 0deg, #06b6d4, #8b5cf6, #10b981, #06b6d4)",
-              padding: "3px",
-              borderRadius: "9999px",
-              animation: "rotate360 6s linear infinite",
-            }}
-          >
-            <div className="w-full h-full rounded-full bg-[#050810]" />
-          </div>
-
-          {/* Glow */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-500 via-violet-500 to-emerald-500 blur-2xl opacity-30 scale-110" />
-
-          {/* Photo */}
-          <div className="relative w-44 h-44 md:w-52 md:h-52 rounded-full overflow-hidden border-2 border-white/10">
-            <Image
-              src="/jhon.jpeg"
-              alt="Christian Jhon Pranata Panjaitan"
-              fill
-              sizes="(max-width: 768px) 176px, 208px"
-              className="object-cover object-[center_15%]"
-              priority
-            />
-          </div>
-        </div>
-
-        {/* Name & Role */}
-        <div
-          className={`space-y-4 transition-all duration-1000 delay-200 ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight">
-            Christian Jhon
-            <br />
-            <span className="shimmer-text">Pranata Panjaitan</span>
-          </h1>
-
-          {/* Typing Role */}
-          <div className="flex items-center justify-center gap-2 text-xl md:text-2xl font-semibold text-slate-300 h-8">
-            <span className="text-cyan-400">&lt;</span>
-            <span className="gradient-text-cyan min-w-[240px] text-left">
-              {displayed}
-              <span className="animate-blink text-cyan-400 ml-0.5">|</span>
-            </span>
-            <span className="text-cyan-400">/&gt;</span>
-          </div>
-        </div>
-
-        {/* Bio */}
-        <p
-          className={`max-w-2xl text-slate-400 text-base md:text-lg leading-relaxed transition-all duration-1000 delay-300 ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          Building{" "}
-          <span className="text-cyan-300 font-semibold">intelligent systems</span> — from face recognition AI to
-          live streaming platforms and cross-platform desktop apps. 3+ years crafting production-grade software.
-        </p>
-
-        {/* Tech Pills */}
-        <div
-          className={`flex flex-wrap justify-center gap-2 max-w-xl transition-all duration-1000 delay-400 ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          {["🤖 AI & Face Recognition", "🌐 Fullstack Web", "🖥️ Desktop (Electron)", "📱 Mobile (Flutter)"].map(
-            (tag) => (
-              <span
-                key={tag}
-                className="px-3 py-1.5 text-xs font-medium rounded-full bg-slate-800/70 border border-slate-700/60 text-slate-300 hover:border-cyan-500/40 hover:text-cyan-300 transition-all duration-300 cursor-default"
-              >
-                {tag}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        {/* Main 2-Column Executive Layout */}
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+          {/* Left Column: Pitch & Actions */}
+          <div className="lg:col-span-7 space-y-6 text-center lg:text-left animate-hero-1">
+            {/* Availability Pill */}
+            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
               </span>
-            )
-          )}
-        </div>
+              <span className="text-xs font-semibold theme-emerald-text">
+                {isId
+                  ? "Aktif sebagai IT Engineer (R&D) · Terbuka untuk Peluang Baru"
+                  : "IT Engineer (R&D) · Open to New Opportunities"}
+              </span>
+            </div>
 
-        {/* Social + CTA */}
-        <div
-          className={`flex flex-col sm:flex-row items-center gap-4 transition-all duration-1000 delay-500 ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          {/* Social Icons */}
-          <div className="flex gap-3">
-            {[
-              {
-                href: "https://github.com/christian050104",
-                icon: <FaGithub className="w-5 h-5" />,
-                label: "GitHub",
-                hover: "hover:border-slate-400 hover:text-white hover:shadow-slate-500/20",
-              },
-              {
-                href: "https://www.linkedin.com/in/christian-jhon-pranata-panjaitan-513364267/",
-                icon: <FaLinkedin className="w-5 h-5" />,
-                label: "LinkedIn",
-                hover: "hover:border-blue-400 hover:text-blue-300 hover:shadow-blue-500/20",
-              },
-              {
-                href: "https://www.instagram.com/pranata_ex21/",
-                icon: <FaInstagram className="w-5 h-5" />,
-                label: "Instagram",
-                hover: "hover:border-pink-400 hover:text-pink-300 hover:shadow-pink-500/20",
-              },
-            ].map((s) => (
+            {/* Name & Dynamic Role */}
+            <div className="space-y-3">
+              <p className="text-xs sm:text-sm font-mono-code font-medium theme-cyan-text tracking-wide uppercase">
+                {isId
+                  ? "IT Engineer · Divisi Riset dan Pengembangan"
+                  : "IT Engineer · Research & Development Division"}
+              </p>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold theme-heading leading-[1.12] tracking-tight">
+                Christian Jhon{" "}
+                <span className="block shimmer-text mt-1">Pranata Panjaitan</span>
+              </h1>
+
+              <div className="flex items-center justify-center lg:justify-start gap-2 text-base sm:text-xl font-semibold h-8">
+                <span className="font-mono-code theme-cyan-text">&gt;</span>
+                <span className="theme-body font-mono-code">
+                  {displayed}
+                  <span className="animate-blink theme-cyan-text ml-0.5">|</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Value-Driven Recruiter Summary */}
+            <p className="text-sm sm:text-base md:text-lg theme-body leading-relaxed max-w-2xl mx-auto lg:mx-0">
+              {isId ? (
+                <>
+                  Merancang perangkat lunak end-to-end dan mengintegrasikannya langsung ke{" "}
+                  <span className="font-semibold theme-heading">
+                    infrastruktur nyata di lapangan
+                  </span>{" "}
+                  — mulai dari AI pengenalan wajah pada perangkat{" "}
+                  <span className="font-semibold theme-heading">IFP</span>, studio live streaming
+                  pada <span className="font-semibold theme-heading">Video Wall & Paperless Conference</span>{" "}
+                  (UPN Surabaya), hingga platform EdTech desktop dan aplikasi web/mobile.
+                </>
+              ) : (
+                <>
+                  Engineering end-to-end software and deploying it onto{" "}
+                  <span className="font-semibold theme-heading">
+                    real enterprise hardware in the field
+                  </span>{" "}
+                  — from AI face recognition on{" "}
+                  <span className="font-semibold theme-heading">IFP displays</span> and live
+                  broadcasting on{" "}
+                  <span className="font-semibold theme-heading">
+                    Video Wall & Paperless Conference
+                  </span>{" "}
+                  systems (UPN Surabaya) to EdTech desktop suites and web/mobile apps.
+                </>
+              )}
+            </p>
+
+            {/* Primary CTA Buttons */}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
               <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={s.label}
-                className={`p-3 rounded-xl bg-slate-800/60 border border-slate-700/50 text-slate-400 transition-all duration-300 hover:scale-110 hover:-translate-y-1 hover:shadow-lg ${s.hover}`}
+                href="#featured"
+                className="btn-primary px-6 py-3.5 text-sm inline-flex items-center gap-2"
               >
-                {s.icon}
+                <span>{isId ? "Lihat Karya Unggulan" : "Explore Flagship Work"}</span>
+                <LuArrowRight className="w-4 h-4" />
               </a>
-            ))}
+
+              <button
+                onClick={openResume}
+                className="btn-secondary px-5 py-3.5 text-sm inline-flex items-center gap-2 cursor-pointer"
+              >
+                <LuFileText className="w-4 h-4 theme-cyan-text" />
+                <span>{isId ? "Lihat / Unduh CV" : "View / Download CV"}</span>
+              </button>
+
+              <button
+                onClick={copyEmail}
+                title={CONTACT_EMAIL}
+                className="surface-pill hover:border-cyan-500/40 px-4 py-3.5 rounded-2xl text-xs sm:text-sm font-medium theme-body hover:theme-heading inline-flex items-center gap-2 transition-all cursor-pointer"
+              >
+                {emailCopied ? (
+                  <LuCheck className="w-4 h-4 text-emerald-500" />
+                ) : (
+                  <LuCopy className="w-4 h-4 theme-cyan-text" />
+                )}
+                <span>
+                  {emailCopied
+                    ? isId
+                      ? "Email Tersalin!"
+                      : "Email Copied!"
+                    : isId
+                    ? "Salin Email"
+                    : "Copy Email"}
+                </span>
+              </button>
+            </div>
+
+            {/* Social Links Row */}
+            <div className="flex items-center justify-center lg:justify-start gap-3 pt-1">
+              <span className="text-xs theme-faint font-medium">
+                {isId ? "Profil Resmi:" : "Connect:"}
+              </span>
+              {[
+                {
+                  href: "https://github.com/christian050104",
+                  icon: <FaGithub className="w-4 h-4" />,
+                  label: "GitHub",
+                },
+                {
+                  href: "https://www.linkedin.com/in/christian-jhon-pranata-panjaitan-513364267/",
+                  icon: <FaLinkedin className="w-4 h-4" />,
+                  label: "LinkedIn",
+                },
+                {
+                  href: "https://www.instagram.com/pranata_ex21/",
+                  icon: <FaInstagram className="w-4 h-4" />,
+                  label: "Instagram",
+                },
+              ].map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl surface-subtle text-xs font-medium theme-muted hover:theme-cyan-text hover:border-cyan-500/35 transition-all"
+                >
+                  {social.icon}
+                  <span>{social.label}</span>
+                </a>
+              ))}
+            </div>
           </div>
 
-          {/* CTA Buttons */}
-          <div className="flex gap-3">
-            <a
-              href="#featured"
-              className="btn-primary px-6 py-3 text-sm font-semibold flex items-center gap-2"
-            >
-              View My Work
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </a>
-            <a
-              href="#contact"
-              className="btn-outline px-6 py-3 text-sm font-semibold"
-            >
-              Hire Me
-            </a>
+          {/* Right Column: Executive Bento Portrait & Tech Card */}
+          <div className="lg:col-span-5 animate-hero-2">
+            <div className="relative mx-auto max-w-md bento-card rounded-3xl p-5 sm:p-6 space-y-5">
+              {/* Top Mini Status Header */}
+              <div className="flex items-center justify-between gap-2 pb-3 border-b border-[var(--border-subtle)]">
+                <div className="flex items-center gap-2">
+                  <LuShieldCheck className="w-4 h-4 text-emerald-500" />
+                  <span className="text-xs font-semibold theme-heading">
+                    {isId ? "IT Engineer · Divisi R&D" : "IT Engineer · R&D Division"}
+                  </span>
+                </div>
+                <span className="text-[11px] font-mono-code theme-cyan-text px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/20">
+                  {isId ? "Okt 2025 – Sekarang" : "Oct 2025 – Present"}
+                </span>
+              </div>
+
+              {/* Portrait Container */}
+              <div className="relative flex flex-col items-center">
+                <div className="relative w-44 h-44 sm:w-52 sm:h-52 rounded-3xl overflow-hidden border-2 border-cyan-500/30 shadow-2xl">
+                  <Image
+                    src="/jhon.jpeg"
+                    alt="Christian Jhon Pranata Panjaitan"
+                    fill
+                    sizes="(max-width: 768px) 176px, 208px"
+                    className="object-cover object-[center_15%]"
+                    priority
+                  />
+                </div>
+
+                {/* Floating Highlight Pill */}
+                <div className="-mt-4 relative z-10 px-4 py-1.5 rounded-full surface-modal shadow-lg flex items-center gap-2">
+                  <LuSparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="text-xs font-bold theme-heading">
+                    {isId ? "Siap Kontribusi Cepat" : "Fast Onboarding & Delivery"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Core Stack Icons Strip */}
+              <div className="space-y-2.5">
+                <p className="text-[11px] font-semibold uppercase tracking-wider theme-muted text-center">
+                  {isId ? "Teknologi Inti Produksi" : "Primary Production Stack"}
+                </p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {CORE_BADGES.map((tech) => (
+                    <span
+                      key={tech}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl surface-subtle text-xs font-semibold theme-heading"
+                    >
+                      <TechIcon name={tech} className="w-3.5 h-3.5" />
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* End-to-End Scope Footnote */}
+              <div className="grid grid-cols-2 gap-2.5 pt-1">
+                <div className="p-3 rounded-2xl surface-subtle flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-cyan-500/15 flex items-center justify-center theme-cyan-text flex-shrink-0">
+                    <LuLayers className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold theme-heading truncate">Fullstack</p>
+                    <p className="text-[11px] theme-muted truncate">UI · API · DB</p>
+                  </div>
+                </div>
+                <div className="p-3 rounded-2xl surface-subtle flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-violet-500/15 flex items-center justify-center theme-violet-text flex-shrink-0">
+                    <LuCpu className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold theme-heading truncate">Applied AI</p>
+                    <p className="text-[11px] theme-muted truncate">Vision & Real-time</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Scroll Indicator */}
-      <div
-        className={`absolute bottom-8 left-1/2 -translate-x-1/2 transition-all duration-1000 delay-700 ${
-          mounted ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        <a href="#about" className="flex flex-col items-center gap-2 group">
-          <span className="text-xs text-slate-500 group-hover:text-slate-400 transition-colors tracking-widest uppercase">
-            Scroll
-          </span>
-          <div className="w-5 h-8 rounded-full border border-slate-700 flex items-start justify-center p-1 group-hover:border-cyan-500/40 transition-colors">
+        {/* Recruiter Impact Metrics Bar */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-hero-3">
+          {metrics.map((m) => (
             <div
-              className="w-1 h-1.5 rounded-full bg-cyan-400"
-              style={{ animation: "float 1.5s ease-in-out infinite" }}
-            />
-          </div>
-        </a>
+              key={m.label}
+              className="bento-card bento-card-interactive rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-1"
+            >
+              <span className="text-2xl sm:text-3xl font-extrabold font-display gradient-text-cyan">
+                {m.value}
+              </span>
+              <p className="text-xs sm:text-sm font-bold theme-heading mt-1">{m.label}</p>
+              <p className="text-[11px] sm:text-xs theme-muted">{m.sub}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

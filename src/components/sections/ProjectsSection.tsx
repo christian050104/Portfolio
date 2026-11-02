@@ -1,373 +1,681 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import projects from "@/data/projects";
+import { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
+import {
+  LuEye,
+  LuExternalLink,
+  LuMaximize2,
+  LuX,
+  LuCircleCheck,
+  LuLayers,
+  LuMonitor,
+  LuSmartphone,
+} from "react-icons/lu";
+import { FaGithub } from "react-icons/fa";
+import projects, {
+  type ProjectItem,
+  encodeAssetPath,
+  formatScreenshotCaption,
+  getScreenshotPlatform,
+} from "@/data/projects";
+import TechIcon from "@/components/ui/TechIcon";
+import LightboxModal from "@/components/ui/LightboxModal";
+import { useAppPreferences } from "@/context/AppPreferencesContext";
 
-/* ── color map ── */
-const projectColors: Record<string, { gradient: string; border: string; badge: string; accent: string }> = {
-  Facel:      { gradient: "from-violet-500/10 to-purple-900/20", border: "border-violet-500/30", badge: "bg-violet-500/20 text-violet-300 border-violet-500/30", accent: "bg-violet-500" },
-  EduSphere:  { gradient: "from-cyan-500/10   to-blue-900/20",   border: "border-cyan-500/30",   badge: "bg-cyan-500/20   text-cyan-300   border-cyan-500/30",   accent: "bg-cyan-500"   },
-  SnapStream: { gradient: "from-emerald-500/10 to-teal-900/20",  border: "border-emerald-500/30", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30", accent: "bg-emerald-500" },
-  "Sistem Monitoring Kesehatan Sapi": { gradient: "from-green-500/10 to-emerald-900/20", border: "border-green-500/30", badge: "bg-green-500/20 text-green-300 border-green-500/30", accent: "bg-green-500" },
-  Labverse:   { gradient: "from-blue-500/10 to-indigo-900/20",   border: "border-blue-500/30",   badge: "bg-blue-500/20   text-blue-300   border-blue-500/30",   accent: "bg-blue-500"   },
-  Labtek:     { gradient: "from-orange-500/10 to-amber-900/20",  border: "border-orange-500/30", badge: "bg-orange-500/20 text-orange-300 border-orange-500/30", accent: "bg-orange-500" },
-  "Compro AGS": { gradient: "from-pink-500/10 to-rose-900/20",  border: "border-pink-500/30",   badge: "bg-pink-500/20   text-pink-300   border-pink-500/30",   accent: "bg-pink-500"   },
-  "Klasifikasi Kotoran Ayam": { gradient: "from-yellow-500/10 to-orange-900/20", border: "border-yellow-500/30", badge: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30", accent: "bg-yellow-500" },
+const FILTERS = ["All", "AI & ML", "Desktop", "Web & Mobile", "Fullstack Web"] as const;
+type FilterValue = (typeof FILTERS)[number];
+
+const ACCENT_GRADIENTS: Record<ProjectItem["accent"], string> = {
+  violet: "from-violet-600/25 via-indigo-600/15 to-transparent",
+  cyan: "from-cyan-600/25 via-sky-600/15 to-transparent",
+  emerald: "from-emerald-600/25 via-teal-600/15 to-transparent",
+  blue: "from-blue-600/25 via-indigo-600/15 to-transparent",
+  amber: "from-amber-500/25 via-orange-600/15 to-transparent",
+  rose: "from-rose-500/25 via-pink-600/15 to-transparent",
 };
-const defaultColors = { gradient: "from-slate-800/30 to-slate-900/30", border: "border-slate-700/40", badge: "bg-slate-700/30 text-slate-300 border-slate-600/40", accent: "bg-slate-500" };
 
-function ProjectIcon({ name }: { name: string }) {
-  const map: Record<string, string> = {
-    Facel:"🤖", EduSphere:"🎓", SnapStream:"📡",
-    "Sistem Monitoring Kesehatan Sapi":"🐄", Labverse:"🔬",
-    Labtek:"🏭", "Compro AGS":"🏢", "Klasifikasi Kotoran Ayam":"🐔",
-  };
-  return <>{map[name] ?? "💻"}</>;
-}
-
-function SafeImg({ src, alt, className }: { src: string; alt: string; className?: string }) {
-  const [err, setErr] = useState(false);
-  if (err) return null;
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt={alt} className={className} onError={() => setErr(true)} />;
-}
-
-/* ── Lightbox Modal ── */
-function Lightbox({ images, name, startIdx, onClose }: {
-  images: string[]; name: string; startIdx: number; onClose: () => void;
+function ArchitectureBlueprint({
+  project,
+  locale,
+}: {
+  project: ProjectItem;
+  locale: "id" | "en";
 }) {
-  const [idx, setIdx] = useState(startIdx);
-  const [visible, setVisible] = useState(false);
-  const total = images.length;
-
-  const prev = useCallback(() => setIdx((i) => (i - 1 + total) % total), [total]);
-  const next = useCallback(() => setIdx((i) => (i + 1) % total), [total]);
-
-  /* Fade-in on mount */
-  useEffect(() => {
-    const t = requestAnimationFrame(() => setVisible(true));
-    return () => cancelAnimationFrame(t);
-  }, []);
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") prev();
-      if (e.key === "ArrowRight") next();
-    };
-    document.addEventListener("keydown", handler);
-    // Lock body scroll so the background doesn't move when swiping/scrolling images
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", handler);
-      document.body.style.overflow = "";
-    };
-  }, [onClose, prev, next]);
+  const modules = project.previewModules?.[locale] ?? project.tech.slice(0, 4);
+  const grad = ACCENT_GRADIENTS[project.accent];
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-8 transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
-      onClick={onClose}
+      className={`relative w-full aspect-video overflow-hidden bg-gradient-to-br ${grad} bg-slate-950 p-4 flex flex-col justify-between select-none`}
     >
-      {/* Blurred Backdrop */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
-
-      {/* Content wrapper: strict max height to fit on screen, flex column */}
       <div
-        className={`relative z-10 w-full max-w-6xl h-full max-h-[90vh] flex flex-col transition-transform duration-300 ${visible ? "scale-100" : "scale-95"}`}
-        onClick={(e) => e.stopPropagation()}
-        style={{ isolation: "isolate" }}
-      >
-        {/* Header */}
-        <div className="flex-none flex items-center justify-between mb-3 px-1">
-          <div className="flex items-center gap-2">
-            <span className="text-white font-bold text-sm md:text-base">{name}</span>
-            <span className="text-slate-400 text-xs md:text-sm">— Screenshot</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-slate-300 text-xs md:text-sm font-medium tabular-nums">{idx + 1} / {total}</span>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/25 transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
-              </svg>
-            </button>
-          </div>
-        </div>
+        className="absolute inset-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage:
+            "radial-gradient(rgba(148, 163, 184, 0.35) 1px, transparent 1px)",
+          backgroundSize: "16px 16px",
+        }}
+      />
 
-        {/* Main image area: flex-1 to take remaining space, min-h-0 prevents overflow */}
-        <div className="flex-1 min-h-0 relative w-full rounded-xl md:rounded-2xl overflow-hidden border border-white/10 bg-black/50 shadow-2xl flex items-center justify-center">
-          {images.map((src, i) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={src}
-              src={src}
-              alt={`${name} screenshot ${i + 1}`}
-              style={{ imageRendering: "auto" }}
-              className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-300 ${
-                i === idx ? "opacity-100" : "opacity-0 pointer-events-none"
-              }`}
-            />
+      <div className="relative z-10 flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-rose-400/80" />
+          <span className="w-2 h-2 rounded-full bg-amber-400/80" />
+          <span className="w-2 h-2 rounded-full bg-emerald-400/80" />
+          <span className="ml-1.5 text-[10px] font-mono-code text-slate-400">
+            {project.id}.architecture
+          </span>
+        </div>
+        <span className="text-[10px] font-mono-code px-2 py-0.5 rounded-md bg-white/10 text-cyan-300 border border-white/10">
+          {project.tech[0]}
+        </span>
+      </div>
+
+      <div className="relative z-10 grid grid-cols-2 gap-2 my-auto py-2">
+        {modules.slice(0, 4).map((mod, idx) => (
+          <div
+            key={mod}
+            className="px-2.5 py-2 rounded-xl bg-slate-900/85 border border-white/10 flex items-center gap-2"
+          >
+            <span className="w-4 h-4 rounded-md bg-cyan-500/20 text-cyan-300 text-[10px] font-mono-code font-bold flex items-center justify-center flex-shrink-0">
+              0{idx + 1}
+            </span>
+            <span className="text-[11px] font-medium text-slate-200 truncate">
+              {mod}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="relative z-10 flex items-center justify-between text-[10px] text-slate-400">
+        <span className="inline-flex items-center gap-1">
+          <LuLayers className="w-3 h-3 text-cyan-400" />
+          {locale === "id" ? "Arsitektur Modul" : "System Modules"}
+        </span>
+        <div className="flex items-center gap-1.5">
+          {project.tech.slice(0, 4).map((t) => (
+            <TechIcon key={t} name={t} className="w-3.5 h-3.5" />
           ))}
-
-          {/* Arrows */}
-          {total > 1 && (
-            <>
-              <button
-                onClick={prev}
-                className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full md:rounded-xl bg-black/50 border border-white/20 flex items-center justify-center text-white hover:bg-black/80 hover:border-white/40 transition-all z-10 shadow-xl backdrop-blur-sm"
-              >
-                <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7"/></svg>
-              </button>
-              <button
-                onClick={next}
-                className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full md:rounded-xl bg-black/50 border border-white/20 flex items-center justify-center text-white hover:bg-black/80 hover:border-white/40 transition-all z-10 shadow-xl backdrop-blur-sm"
-              >
-                <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7"/></svg>
-              </button>
-            </>
-          )}
         </div>
-
-        {/* Thumbnail strip */}
-        {total > 1 && (
-          <div className="flex-none flex justify-center gap-2 mt-4 px-2 overflow-x-auto overflow-y-hidden pb-2 snap-x hide-scrollbar">
-            {images.map((src, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <button
-                key={i}
-                onClick={() => setIdx(i)}
-                className={`flex-shrink-0 w-16 h-10 md:w-20 md:h-12 rounded-lg overflow-hidden border-2 transition-all duration-300 snap-center ${
-                  i === idx
-                    ? "border-cyan-400 opacity-100 scale-105 shadow-[0_0_15px_rgba(34,211,238,0.4)]"
-                    : "border-white/10 opacity-40 hover:opacity-100 hover:border-white/30"
-                }`}
-              >
-                <img src={src} alt="" className="w-full h-full object-cover" />
-              </button>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
 }
 
-/* ── Image Slider (in card) ── */
-function ImageSlider({ images, name, gradient }: { images: string[]; name: string; gradient: string }) {
-  const [imgIdx, setImgIdx] = useState(0);
-  const [lightbox, setLightbox] = useState(false);
-  const total = images.length;
-
-  const prevImg = (e: React.MouseEvent) => { e.stopPropagation(); setImgIdx((i) => (i - 1 + total) % total); };
-  const nextImg = (e: React.MouseEvent) => { e.stopPropagation(); setImgIdx((i) => (i + 1) % total); };
-
+/** Composite Cover for Projects that have BOTH Website (Landscape) & Mobile (Portrait) screenshots */
+function DualPlatformCardCover({
+  webCover,
+  mobileCover,
+  projectName,
+  webCount,
+  mobileCount,
+  isId,
+}: {
+  webCover: string;
+  mobileCover: string;
+  projectName: string;
+  webCount: number;
+  mobileCount: number;
+  isId: boolean;
+}) {
   return (
-    <>
-      <div
-        className={`relative w-full aspect-video rounded-xl overflow-hidden border border-white/10 bg-gradient-to-br ${gradient} flex items-center justify-center group/img ${total > 0 ? "cursor-zoom-in" : ""}`}
-        onClick={() => total > 0 && setLightbox(true)}
-      >
-        {/* Placeholder icon */}
-        <div className="text-center space-y-2 z-0">
-          <div className="text-6xl opacity-20"><ProjectIcon name={name} /></div>
-          {total === 0 && <p className="text-slate-600 text-xs">Screenshot coming soon</p>}
-        </div>
-
-        {/* Images */}
-        {images.map((src, i) => (
-          <SafeImg
-            key={src}
-            src={src}
-            alt={`${name} screenshot ${i + 1}`}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-400 ${
-              i === imgIdx ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
-          />
-        ))}
-
-        {/* Expand hint */}
-        {total > 0 && (
-          <div className="absolute top-2 right-2 w-7 h-7 rounded-lg bg-black/50 border border-white/10 flex items-center justify-center text-white opacity-0 group-hover/img:opacity-100 transition-opacity z-10">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
-          </div>
-        )}
-
-        {/* Arrows — only if multiple images */}
-        {total > 1 && (
-          <>
-            <button
-              onClick={prevImg}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-black/50 border border-white/10 flex items-center justify-center text-white opacity-0 group-hover/img:opacity-100 transition-opacity hover:bg-black/70 z-10"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>
-            </button>
-            <button
-              onClick={nextImg}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-black/50 border border-white/10 flex items-center justify-center text-white opacity-0 group-hover/img:opacity-100 transition-opacity hover:bg-black/70 z-10"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
-            </button>
-
-            {/* Dots + counter */}
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
-              <div className="flex gap-1">
-                {images.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={(e) => { e.stopPropagation(); setImgIdx(i); }}
-                    className={`h-1 rounded-full transition-all duration-300 ${
-                      i === imgIdx ? "w-4 bg-white" : "w-1 bg-white/40 hover:bg-white/70"
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="text-[10px] text-white/60 bg-black/40 px-1.5 py-0.5 rounded">
-                {imgIdx + 1}/{total}
-              </span>
-            </div>
-          </>
-        )}
+    <div className="relative w-full aspect-video bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 overflow-hidden p-3 flex items-center">
+      {/* Website Screen (Left / Main Frame) */}
+      <div className="relative w-[76%] h-[88%] rounded-xl overflow-hidden border border-white/15 shadow-xl bg-slate-900 group-hover:scale-[1.02] transition-transform duration-500">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={encodeAssetPath(webCover)}
+          alt={`${projectName} Web`}
+          loading="lazy"
+          className="w-full h-full object-cover object-left-top"
+        />
       </div>
 
-      {/* Lightbox */}
-      {lightbox && (
-        <Lightbox
-          images={images}
-          name={name}
-          startIdx={imgIdx}
-          onClose={() => setLightbox(false)}
+      {/* Floating Mobile App Screen (Right Foreground Overlap) */}
+      <div className="absolute right-3.5 bottom-2.5 top-3 w-[27%] flex items-center justify-center group-hover:-translate-y-1 transition-transform duration-500 z-10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={encodeAssetPath(mobileCover)}
+          alt={`${projectName} Mobile`}
+          loading="lazy"
+          className="h-full w-auto object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)]"
         />
-      )}
-    </>
+      </div>
+
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-transparent to-transparent pointer-events-none" />
+
+      {/* Dual Count Pill */}
+      <div className="absolute bottom-2.5 left-3 px-2.5 py-1 rounded-lg bg-slate-950/85 backdrop-blur-md border border-white/15 text-[10px] font-mono-code text-white flex items-center gap-2 z-20">
+        <span className="inline-flex items-center gap-1 text-cyan-300">
+          <LuMonitor className="w-3 h-3" /> {webCount} Web
+        </span>
+        <span className="text-slate-500">·</span>
+        <span className="inline-flex items-center gap-1 text-violet-300">
+          <LuSmartphone className="w-3 h-3" /> {mobileCount} {isId ? "Mobile" : "App"}
+        </span>
+      </div>
+    </div>
   );
 }
 
-function ProjectsCarousel() {
-  const [idx, setIdx] = useState(0);
-  const p = projects[idx];
-  const c = projectColors[p.name] ?? defaultColors;
-  const total = projects.length;
+function ProjectDetailModal({
+  project,
+  locale,
+  onClose,
+  onOpenLightbox,
+}: {
+  project: ProjectItem;
+  locale: "id" | "en";
+  onClose: () => void;
+  onOpenLightbox: (startIdx: number, platform: "all" | "web" | "mobile") => void;
+}) {
+  const isId = locale === "id";
+  const [detailTab, setDetailTab] = useState<"web" | "mobile">("web");
 
-  const prev = () => setIdx((i) => (i - 1 + total) % total);
-  const next = () => setIdx((i) => (i + 1) % total);
+  const webImages = useMemo(
+    () => project.images.filter((src) => getScreenshotPlatform(src) === "web"),
+    [project.images]
+  );
+  const mobileImages = useMemo(
+    () => project.images.filter((src) => getScreenshotPlatform(src) === "mobile"),
+    [project.images]
+  );
+  const isDualPlatform = webImages.length > 0 && mobileImages.length > 0;
 
-  return (
-    <div className="space-y-5">
-      {/* Nav header */}
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-          {idx + 1} / {total} Projects
-        </p>
-        <div className="flex items-center gap-3">
-          {/* Dots */}
-          <div className="flex gap-1.5 flex-wrap max-w-[200px]">
-            {projects.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setIdx(i)}
-                className={`h-1.5 rounded-full transition-all duration-300 ${i === idx ? `w-6 ${c.accent}` : "w-1.5 bg-slate-700 hover:bg-slate-500"}`}
-              />
-            ))}
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [onClose]);
+
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9990] flex items-center justify-center p-3 sm:p-6"
+      onClick={onClose}
+    >
+      <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-lg" />
+
+      <div
+        className="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl surface-modal shadow-2xl p-6 sm:p-8 space-y-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/12 theme-cyan-text border border-cyan-500/25">
+                {project.category}
+              </span>
+              <span className="text-xs font-mono-code theme-muted">{project.year}</span>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-extrabold theme-heading">
+              {project.name}
+            </h3>
+            <p className="text-xs sm:text-sm font-semibold theme-cyan-text">
+              {project.role[locale]}
+            </p>
           </div>
-          {/* Arrows */}
-          <div className="flex gap-1">
-            <button onClick={prev} className="w-8 h-8 rounded-lg glass-card border border-slate-700/50 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-500 transition-all">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>
-            </button>
-            <button onClick={next} className="w-8 h-8 rounded-lg glass-card border border-slate-700/50 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-500 transition-all">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
-            </button>
-          </div>
+
+          <button
+            onClick={onClose}
+            aria-label="Close modal"
+            className="w-9 h-9 rounded-xl surface-pill flex items-center justify-center theme-muted hover:theme-heading transition-colors cursor-pointer flex-shrink-0"
+          >
+            <LuX className="w-4 h-4" />
+          </button>
         </div>
-      </div>
 
-      {/* Card */}
-      <div className={`glass-card rounded-3xl overflow-hidden border bg-gradient-to-br ${c.gradient} ${c.border} transition-all duration-500`}>
-        <div className="grid lg:grid-cols-2 gap-0">
-          {/* Left: Info */}
-          <div className="p-7 md:p-9 space-y-5">
-            <div className="flex gap-2 flex-wrap">
-              <span className={`px-3 py-1 text-xs font-bold rounded-full border ${c.badge}`}>{p.category}</span>
-              {p.featured && (
-                <span className="text-xs text-cyan-400 border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 rounded-full">⭐ Featured</span>
-              )}
-            </div>
-            <div>
-              <h3 className="text-2xl md:text-3xl font-black text-white mb-1">{p.name}</h3>
-              <p className="text-slate-400 text-sm flex items-center gap-1.5"><span>👤</span>{p.role}</p>
-            </div>
-            <p className="text-slate-300 text-sm leading-relaxed">{p.description}</p>
-
-            {p.highlights && p.highlights.length > 0 && (
-              <div className="space-y-2">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Key Features</h4>
-                <ul className="space-y-1.5">
-                  {p.highlights.map((h) => (
-                    <li key={h} className="flex items-start gap-2.5 text-sm text-slate-300">
-                      <span className={`mt-0.5 w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${c.badge} border text-[10px]`}>✓</span>
-                      {h}
-                    </li>
-                  ))}
-                </ul>
+        {/* Visual Preview (Dual-Platform Aware!) */}
+        {project.images.length > 0 ? (
+          <div className="space-y-3">
+            {isDualPlatform && (
+              <div className="flex items-center gap-2 p-1.5 rounded-2xl surface-subtle">
+                <button
+                  onClick={() => setDetailTab("web")}
+                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold inline-flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                    detailTab === "web"
+                      ? "btn-primary"
+                      : "theme-muted hover:theme-heading"
+                  }`}
+                >
+                  <LuMonitor className="w-4 h-4" />
+                  <span>{isId ? `Versi Website (${webImages.length})` : `Website (${webImages.length})`}</span>
+                </button>
+                <button
+                  onClick={() => setDetailTab("mobile")}
+                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold inline-flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                    detailTab === "mobile"
+                      ? "btn-primary"
+                      : "theme-muted hover:theme-heading"
+                  }`}
+                >
+                  <LuSmartphone className="w-4 h-4" />
+                  <span>
+                    {isId ? `Versi Mobile Flutter (${mobileImages.length})` : `Flutter Mobile (${mobileImages.length})`}
+                  </span>
+                </button>
               </div>
             )}
 
-            <div className="space-y-2">
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Tech Stack</h4>
-              <div className="flex flex-wrap gap-1.5">
-                {p.tech.map((t) => (
-                  <span key={t} className="px-2.5 py-1 text-xs rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-300 hover:text-cyan-300 hover:border-cyan-500/40 transition-colors">{t}</span>
-                ))}
+            {isDualPlatform && detailTab === "mobile" ? (
+              <div className="space-y-3">
+                {/* 3-Up Portrait Mobile Showcase Stage */}
+                <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl border border-[var(--border-strong)] bg-gradient-to-br from-slate-950 via-indigo-950/40 to-slate-900">
+                  {mobileImages.slice(0, 3).map((src, i) => (
+                    <button
+                      key={src}
+                      onClick={() => onOpenLightbox(i, "mobile")}
+                      className="group relative h-52 sm:h-64 flex flex-col items-center justify-center gap-2 cursor-zoom-in"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={encodeAssetPath(src)}
+                        alt={formatScreenshotCaption(src)}
+                        className="h-44 sm:h-56 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xl"
+                      />
+                      <span className="text-[10px] font-medium text-slate-300 truncate max-w-full px-1">
+                        {formatScreenshotCaption(src)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Remaining Mobile Thumbnails */}
+                {mobileImages.length > 3 && (
+                  <div className="flex items-center gap-2 overflow-x-auto pb-1 hide-scrollbar">
+                    {mobileImages.map((img, i) => (
+                      <button
+                        key={img}
+                        onClick={() => onOpenLightbox(i, "mobile")}
+                        className="flex-shrink-0 px-3 py-1.5 rounded-xl surface-pill hover:border-cyan-400 text-xs font-medium theme-body hover:theme-cyan-text transition-all cursor-pointer"
+                      >
+                        {formatScreenshotCaption(img)}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
+            ) : (
+              <div className="space-y-3">
+                {(() => {
+                  const list = isDualPlatform ? webImages : project.images;
+                  const plat = isDualPlatform ? "web" : "all";
+                  return (
+                    <>
+                      <div
+                        onClick={() => onOpenLightbox(0, plat)}
+                        className="group relative w-full aspect-video rounded-2xl overflow-hidden border border-[var(--border-strong)] bg-slate-950 cursor-zoom-in"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={encodeAssetPath(list[0])}
+                          alt={project.name}
+                          className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                        />
+                        <div className="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/80 text-white text-xs font-semibold flex items-center gap-1.5 border border-white/15">
+                          <LuMaximize2 className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>
+                            {isId
+                              ? `Buka ${list.length} Layar ${isDualPlatform ? "Website" : ""}`
+                              : `View ${list.length} ${isDualPlatform ? "Web" : ""} Screenshots`}
+                          </span>
+                        </div>
+                      </div>
 
-            <a href={p.github} target="_blank" rel="noopener noreferrer" className="btn-primary inline-flex items-center gap-2 px-5 py-2.5 text-sm">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-              </svg>
-              View on GitHub
-            </a>
+                      {list.length > 1 && (
+                        <div className="flex items-center gap-2 overflow-x-auto pb-1 hide-scrollbar">
+                          {list.slice(0, 10).map((img, i) => (
+                            <button
+                              key={img}
+                              onClick={() => onOpenLightbox(i, plat)}
+                              className="flex-shrink-0 w-24 h-14 rounded-xl overflow-hidden border border-[var(--border-subtle)] hover:border-cyan-400 transition-all cursor-pointer"
+                              title={formatScreenshotCaption(img)}
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={encodeAssetPath(img)}
+                                alt={formatScreenshotCaption(img)}
+                                loading="lazy"
+                                className="w-full h-full object-cover"
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
+            )}
           </div>
+        ) : (
+          <div className="rounded-2xl overflow-hidden border border-[var(--border-strong)]">
+            <ArchitectureBlueprint project={project} locale={locale} />
+          </div>
+        )}
 
-          {/* Right: Image Slider */}
-          <div className="relative bg-slate-900/40 min-h-[240px] flex items-center justify-center p-6 border-l border-white/5">
-            <div className="w-full">
-              <ImageSlider
-                images={p.images ?? []}
-                name={p.name}
-                gradient={c.gradient}
-              />
-            </div>
+        {/* Full Description */}
+        <p className="text-sm sm:text-base theme-body leading-relaxed">
+          {project.description[locale]}
+        </p>
+
+        {/* Highlights */}
+        {project.highlights[locale].length > 0 && (
+          <div className="space-y-2.5">
+            <h4 className="text-xs font-bold uppercase tracking-wider theme-muted">
+              {isId ? "Sorotan Teknis & Fitur" : "Technical Highlights"}
+            </h4>
+            <ul className="space-y-2">
+              {project.highlights[locale].map((h) => (
+                <li key={h} className="flex items-start gap-2.5 text-sm theme-body">
+                  <LuCircleCheck className="w-4 h-4 theme-emerald-text flex-shrink-0 mt-0.5" />
+                  <span>{h}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Tech Stack */}
+        <div className="space-y-2">
+          <h4 className="text-xs font-bold uppercase tracking-wider theme-muted">
+            Tech Stack
+          </h4>
+          <div className="flex flex-wrap gap-2">
+            {project.tech.map((t) => (
+              <span
+                key={t}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl surface-subtle text-xs font-semibold theme-heading"
+              >
+                <TechIcon name={t} className="w-3.5 h-3.5" />
+                {t}
+              </span>
+            ))}
           </div>
         </div>
+
+        {/* Footer Actions */}
+        <div className="flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-[var(--border-subtle)]">
+          {project.images.length > 0 && (
+            <button
+              onClick={() =>
+                onOpenLightbox(0, isDualPlatform ? detailTab : "all")
+              }
+              className="btn-secondary px-4 py-2.5 text-xs sm:text-sm inline-flex items-center gap-2 cursor-pointer"
+            >
+              <LuMaximize2 className="w-4 h-4 theme-cyan-text" />
+              <span>{isId ? "Layar Penuh" : "Fullscreen Gallery"}</span>
+            </button>
+          )}
+          <a
+            href={project.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary px-5 py-2.5 text-xs sm:text-sm inline-flex items-center gap-2"
+          >
+            <FaGithub className="w-4 h-4" />
+            <span>{isId ? "Lihat Kode di GitHub" : "View on GitHub"}</span>
+            <LuExternalLink className="w-3.5 h-3.5" />
+          </a>
+        </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
-/* ── Main Section ── */
-export default function ProjectsSection() {
+export default function ProjectsSection({
+  projectsData = projects,
+}: {
+  projectsData?: ProjectItem[];
+}) {
+  const { locale } = useAppPreferences();
+  const [filter, setFilter] = useState<FilterValue>("All");
+  const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
+  const [lightboxState, setLightboxState] = useState<{
+    project: ProjectItem;
+    startIdx: number;
+    platform: "all" | "web" | "mobile";
+  } | null>(null);
+
+  const isId = locale === "id";
+
+  const filteredProjects =
+    filter === "All"
+      ? projectsData
+      : projectsData.filter((p) => p.category === filter);
+
+  const getFilterLabel = (f: FilterValue) => {
+    if (f === "All") return isId ? "Semua Proyek" : "All Projects";
+    return f;
+  };
+
+  const getCount = (f: FilterValue) =>
+    f === "All"
+      ? projectsData.length
+      : projectsData.filter((p) => p.category === f).length;
+
   return (
-    <section id="projects" className="space-y-12">
+    <section id="projects" className="space-y-10">
       {/* Header */}
       <div className="reveal text-center space-y-3">
-        <p className="text-cyan-400 text-sm font-semibold tracking-widest uppercase">Portfolio</p>
-        <h2 className="text-3xl md:text-5xl font-black text-white">
-          All My <span className="gradient-text-cyan">Projects</span>
+        <p className="theme-cyan-text text-xs font-mono-code font-semibold tracking-widest uppercase">
+          {isId ? "Katalog Portofolio" : "Project Archive"}
+        </p>
+        <h2 className="text-3xl md:text-4xl font-extrabold theme-heading">
+          {isId ? (
+            <>
+              Eksplorasi Seluruh{" "}
+              <span className="gradient-text-cyan">Karya & Sistem</span> Saya
+            </>
+          ) : (
+            <>
+              Complete <span className="gradient-text-cyan">Engineering Portfolio</span>
+            </>
+          )}
         </h2>
-        <p className="text-slate-400 max-w-lg mx-auto text-sm">
-          From AI-powered systems to full-stack web apps — everything I&apos;ve built.
+        <p className="theme-muted text-sm max-w-xl mx-auto">
+          {isId
+            ? "Filter berdasarkan domain teknologi atau klik proyek mana pun untuk menelusuri versi Website, Mobile, maupun arsitekturnya."
+            : "Filter by domain or inspect any card to explore Website portals, Flutter Mobile screens, and system architecture."}
         </p>
         <div className="section-divider" />
       </div>
 
-      {/* All projects carousel */}
-      <div className="reveal">
-        <ProjectsCarousel />
+      {/* Category Filter Bar */}
+      <div className="reveal flex flex-wrap justify-center gap-2">
+        {FILTERS.map((f) => {
+          const active = filter === f;
+          return (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                active
+                  ? "btn-primary"
+                  : "surface-pill theme-muted hover:theme-heading"
+              }`}
+            >
+              <span>{getFilterLabel(f)}</span>
+              <span
+                className={`text-[11px] font-mono-code px-1.5 py-0.5 rounded-md ${
+                  active ? "bg-white/20 text-white" : "surface-subtle theme-muted"
+                }`}
+              >
+                {getCount(f)}
+              </span>
+            </button>
+          );
+        })}
       </div>
+
+      {/* Responsive Bento Project Grid */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {filteredProjects.map((proj) => {
+          const hasImages = proj.images.length > 0;
+          const webImgs = proj.images.filter((s) => getScreenshotPlatform(s) === "web");
+          const mobImgs = proj.images.filter((s) => getScreenshotPlatform(s) === "mobile");
+          const isDual = webImgs.length > 0 && mobImgs.length > 0;
+
+          return (
+            <article
+              key={proj.id}
+              className="bento-card bento-card-interactive rounded-3xl overflow-hidden flex flex-col justify-between group"
+            >
+              <div>
+                {/* Visual Top */}
+                <div
+                  onClick={() =>
+                    hasImages
+                      ? setLightboxState({ project: proj, startIdx: 0, platform: "all" })
+                      : setSelectedProject(proj)
+                  }
+                  className="relative border-b border-[var(--border-subtle)] cursor-pointer overflow-hidden"
+                >
+                  {isDual ? (
+                    <DualPlatformCardCover
+                      webCover={webImgs[0]}
+                      mobileCover={mobImgs[0]}
+                      projectName={proj.name}
+                      webCount={webImgs.length}
+                      mobileCount={mobImgs.length}
+                      isId={isId}
+                    />
+                  ) : hasImages ? (
+                    <div className="relative w-full aspect-video bg-slate-950 overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={encodeAssetPath(proj.images[0])}
+                        alt={proj.name}
+                        loading="lazy"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+
+                      <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md border border-white/15 text-[11px] font-mono-code text-white flex items-center gap-1.5">
+                        <LuMaximize2 className="w-3 h-3 text-cyan-400" />
+                        <span>
+                          {proj.images.length} {isId ? "Layar" : "Screens"}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <ArchitectureBlueprint project={proj} locale={locale} />
+                  )}
+
+                  {/* Top-left Category Tag */}
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 z-20">
+                    <span className="px-2.5 py-1 rounded-lg bg-slate-950/85 backdrop-blur-md border border-white/15 text-[11px] font-bold text-white">
+                      {proj.category}
+                    </span>
+                    {proj.featured && (
+                      <span className="px-2 py-1 rounded-lg bg-cyan-500/90 text-[10px] font-extrabold text-white uppercase tracking-wider">
+                        Flagship
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Card Body */}
+                <div className="p-5 sm:p-6 space-y-3">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <h3 className="text-lg font-extrabold theme-heading leading-snug group-hover:theme-cyan-text transition-colors">
+                      {proj.name}
+                    </h3>
+                    <span className="text-[11px] font-mono-code theme-faint flex-shrink-0">
+                      {proj.year}
+                    </span>
+                  </div>
+
+                  <p className="text-xs font-semibold theme-cyan-text">
+                    {proj.impactBadge[locale]}
+                  </p>
+
+                  <p className="text-xs sm:text-sm theme-muted leading-relaxed line-clamp-3">
+                    {proj.shortDesc[locale]}
+                  </p>
+                </div>
+              </div>
+
+              {/* Card Footer: Tech + Actions */}
+              <div className="px-5 sm:px-6 pb-5 sm:pb-6 space-y-4">
+                <div className="flex flex-wrap gap-1.5">
+                  {proj.tech.slice(0, 4).map((t) => (
+                    <span
+                      key={t}
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded-lg surface-subtle text-[11px] font-medium theme-body"
+                    >
+                      <TechIcon name={t} className="w-3 h-3" />
+                      {t}
+                    </span>
+                  ))}
+                  {proj.tech.length > 4 && (
+                    <span className="px-2 py-1 rounded-lg surface-subtle text-[11px] font-mono-code theme-muted">
+                      +{proj.tech.length - 4}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 pt-3 border-t border-[var(--border-subtle)]">
+                  <button
+                    onClick={() => setSelectedProject(proj)}
+                    className="flex-1 py-2 px-3 rounded-xl btn-secondary text-xs font-semibold inline-flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <LuEye className="w-3.5 h-3.5 theme-cyan-text" />
+                    <span>{isId ? "Detail Proyek" : "Case Details"}</span>
+                  </button>
+
+                  <a
+                    href={proj.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${proj.name} GitHub`}
+                    className="py-2 px-3 rounded-xl surface-pill hover:border-cyan-500/40 text-xs font-semibold theme-body hover:theme-heading inline-flex items-center gap-1.5 transition-all"
+                  >
+                    <FaGithub className="w-3.5 h-3.5" />
+                    <span>Code</span>
+                  </a>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      {/* Project Detail Modal */}
+      {selectedProject && (
+        <ProjectDetailModal
+          project={selectedProject}
+          locale={locale}
+          onClose={() => setSelectedProject(null)}
+          onOpenLightbox={(startIdx, platform) => {
+            const target = selectedProject;
+            setSelectedProject(null);
+            setLightboxState({ project: target, startIdx, platform });
+          }}
+        />
+      )}
+
+      {/* Lightbox Modal */}
+      {lightboxState && (
+        <LightboxModal
+          images={lightboxState.project.images}
+          projectName={lightboxState.project.name}
+          startIndex={lightboxState.startIdx}
+          initialPlatform={lightboxState.platform}
+          onClose={() => setLightboxState(null)}
+        />
+      )}
     </section>
   );
 }
