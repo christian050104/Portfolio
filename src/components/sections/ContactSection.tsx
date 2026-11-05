@@ -33,8 +33,8 @@ export default function ContactSection() {
     {
       title: "Instagram",
       sub: isId ? "Media sosial personal" : "Personal social profile",
-      value: "@pranata_ex21",
-      href: "https://www.instagram.com/pranata_ex21/",
+      value: "@rexorion__",
+      href: "https://www.instagram.com/rexorion__/",
       icon: <FaInstagram className="w-5 h-5 text-pink-500" />,
     },
   ];

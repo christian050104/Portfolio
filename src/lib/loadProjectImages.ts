@@ -3,13 +3,16 @@ import path from "node:path";
 import baseProjects, {
   type ProjectItem,
   getScreenshotPlatform,
+  getWebPortalRole,
 } from "@/data/projects";
 
 const IMAGE_EXT_REGEX = /\.(jpg|jpeg|png|webp|avif)$/i;
 
 function getSortPriority(filename: string): number {
   const lower = filename.toLowerCase();
-  const platformOffset = getScreenshotPlatform(filename) === "mobile" ? 10 : 0;
+  const isMobile = getScreenshotPlatform(filename) === "mobile";
+  const isAdmin = !isMobile && getWebPortalRole(filename) === "admin";
+  const groupOffset = isMobile ? 20 : isAdmin ? 10 : 0;
 
   if (
     lower.includes("dashboard") ||
@@ -18,12 +21,12 @@ function getSortPriority(filename: string): number {
     lower.startsWith("home") ||
     lower.startsWith("1")
   ) {
-    return platformOffset + 0;
+    return groupOffset + 0;
   }
   if (lower.includes("login") || lower.includes("register") || lower.includes("auth")) {
-    return platformOffset + 2;
+    return groupOffset + 2;
   }
-  return platformOffset + 1;
+  return groupOffset + 1;
 }
 
 export function loadProjectsWithAutoImages(): ProjectItem[] {

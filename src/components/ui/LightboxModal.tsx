@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import {
   LuX,
@@ -9,25 +9,32 @@ import {
   LuMonitor,
   LuSmartphone,
   LuLayers,
+  LuGlobe,
+  LuShieldCheck,
 } from "react-icons/lu";
 import {
   encodeAssetPath,
   formatScreenshotCaption,
   getScreenshotPlatform,
+  getWebPortalRole,
 } from "@/data/projects";
 import { useAppPreferences } from "@/context/AppPreferencesContext";
+
+export type LightboxFilterMode = "all" | "web" | "mobile" | "storefront" | "admin";
 
 interface LightboxModalProps {
   images: string[];
   projectName: string;
+  dualPortal?: boolean;
   startIndex?: number;
-  initialPlatform?: "all" | "web" | "mobile";
+  initialPlatform?: LightboxFilterMode;
   onClose: () => void;
 }
 
 export default function LightboxModal({
   images,
   projectName,
+  dualPortal = false,
   startIndex = 0,
   initialPlatform = "all",
   onClose,
@@ -35,27 +42,48 @@ export default function LightboxModal({
   const { locale } = useAppPreferences();
   const isId = locale === "id";
 
-  const webImages = useMemo(
-    () => images.filter((src) => getScreenshotPlatform(src) === "web"),
-    [images]
-  );
-  const mobileImages = useMemo(
-    () => images.filter((src) => getScreenshotPlatform(src) === "mobile"),
-    [images]
-  );
+  const webImages = images.filter((src) => getScreenshotPlatform(src) === "web");
+  const mobileImages = images.filter((src) => getScreenshotPlatform(src) === "mobile");
   const isDualPlatform = webImages.length > 0 && mobileImages.length > 0;
 
-  const [platformFilter, setPlatformFilter] = useState<"all" | "web" | "mobile">(
-    isDualPlatform ? initialPlatform : "all"
-  );
+  const storefrontImages = dualPortal
+    ? images.filter((src) => getWebPortalRole(src) === "storefront")
+    : [];
+  const adminImages = dualPortal
+    ? images.filter((src) => getWebPortalRole(src) === "admin")
+    : [];
+  const isDualPortal =
+    !isDualPlatform &&
+    dualPortal &&
+    storefrontImages.length > 0 &&
+    adminImages.length > 0;
+
+  const [filterMode, setFilterMode] = useState<LightboxFilterMode>(() => {
+    if (isDualPlatform && (initialPlatform === "web" || initialPlatform === "mobile")) {
+      return initialPlatform;
+    }
+    if (isDualPortal && (initialPlatform === "storefront" || initialPlatform === "admin")) {
+      return initialPlatform;
+    }
+    return "all";
+  });
   const [idx, setIdx] = useState(startIndex);
   const touchStartX = useRef(0);
   const thumbRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  const activeList = useMemo(() => {
-    if (!isDualPlatform || platformFilter === "all") return images;
-    return platformFilter === "web" ? webImages : mobileImages;
-  }, [images, webImages, mobileImages, isDualPlatform, platformFilter]);
+  const activeList = (() => {
+    if (isDualPlatform) {
+      if (filterMode === "web") return webImages;
+      if (filterMode === "mobile") return mobileImages;
+      return images;
+    }
+    if (isDualPortal) {
+      if (filterMode === "storefront") return storefrontImages;
+      if (filterMode === "admin") return adminImages;
+      return images;
+    }
+    return images;
+  })();
 
   const total = activeList.length;
   const safeIdx = idx < total ? idx : 0;
@@ -95,16 +123,17 @@ export default function LightboxModal({
         block: "nearest",
       });
     }
-  }, [safeIdx, platformFilter]);
+  }, [safeIdx, filterMode]);
 
   if (typeof document === "undefined" || total === 0) return null;
 
   const currentSrc = activeList[safeIdx];
   const caption = formatScreenshotCaption(currentSrc);
   const currentPlatform = getScreenshotPlatform(currentSrc);
+  const currentPortal = getWebPortalRole(currentSrc);
 
-  const handleSelectPlatform = (nextPlatform: "all" | "web" | "mobile") => {
-    setPlatformFilter(nextPlatform);
+  const handleSelectFilter = (nextMode: LightboxFilterMode) => {
+    setFilterMode(nextMode);
     setIdx(0);
   };
 
@@ -145,6 +174,29 @@ export default function LightboxModal({
               </span>
             )}
 
+            {isDualPortal && (
+              <span
+                className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
+                  currentPortal === "admin"
+                    ? "bg-amber-500/20 text-amber-300 border-amber-500/35"
+                    : "bg-sky-500/20 text-sky-300 border-sky-500/35"
+                }`}
+              >
+                {currentPortal === "admin" ? (
+                  <LuShieldCheck className="w-3 h-3" />
+                ) : (
+                  <LuGlobe className="w-3 h-3" />
+                )}
+                {currentPortal === "admin"
+                  ? isId
+                    ? "Panel Admin"
+                    : "Admin Panel"
+                  : isId
+                  ? "Portal User"
+                  : "User Portal"}
+              </span>
+            )}
+
             <span className="text-cyan-400 text-xs font-mono-code px-2.5 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/30">
               {caption}
             </span>
@@ -155,9 +207,9 @@ export default function LightboxModal({
             {isDualPlatform && (
               <div className="flex items-center p-1 rounded-xl bg-white/10 border border-white/15 text-xs">
                 <button
-                  onClick={() => handleSelectPlatform("all")}
+                  onClick={() => handleSelectFilter("all")}
                   className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
-                    platformFilter === "all"
+                    filterMode === "all"
                       ? "bg-cyan-500 text-white"
                       : "text-slate-300 hover:text-white"
                   }`}
@@ -167,9 +219,9 @@ export default function LightboxModal({
                   <span className="font-mono-code text-[10px]">({images.length})</span>
                 </button>
                 <button
-                  onClick={() => handleSelectPlatform("web")}
+                  onClick={() => handleSelectFilter("web")}
                   className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
-                    platformFilter === "web"
+                    filterMode === "web"
                       ? "bg-cyan-500 text-white"
                       : "text-slate-300 hover:text-white"
                   }`}
@@ -179,9 +231,9 @@ export default function LightboxModal({
                   <span className="font-mono-code text-[10px]">({webImages.length})</span>
                 </button>
                 <button
-                  onClick={() => handleSelectPlatform("mobile")}
+                  onClick={() => handleSelectFilter("mobile")}
                   className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
-                    platformFilter === "mobile"
+                    filterMode === "mobile"
                       ? "bg-cyan-500 text-white"
                       : "text-slate-300 hover:text-white"
                   }`}
@@ -189,6 +241,48 @@ export default function LightboxModal({
                   <LuSmartphone className="w-3 h-3" />
                   <span>Mobile</span>
                   <span className="font-mono-code text-[10px]">({mobileImages.length})</span>
+                </button>
+              </div>
+            )}
+
+            {/* Dual-Portal Filter Switcher (Storefront / Public vs Admin Backoffice) */}
+            {isDualPortal && (
+              <div className="flex items-center p-1 rounded-xl bg-white/10 border border-white/15 text-xs">
+                <button
+                  onClick={() => handleSelectFilter("all")}
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+                    filterMode === "all"
+                      ? "bg-cyan-500 text-white"
+                      : "text-slate-300 hover:text-white"
+                  }`}
+                >
+                  <LuLayers className="w-3 h-3" />
+                  <span className="hidden sm:inline">{isId ? "Semua" : "All"}</span>
+                  <span className="font-mono-code text-[10px]">({images.length})</span>
+                </button>
+                <button
+                  onClick={() => handleSelectFilter("storefront")}
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+                    filterMode === "storefront"
+                      ? "bg-cyan-500 text-white"
+                      : "text-slate-300 hover:text-white"
+                  }`}
+                >
+                  <LuGlobe className="w-3 h-3" />
+                  <span>User</span>
+                  <span className="font-mono-code text-[10px]">({storefrontImages.length})</span>
+                </button>
+                <button
+                  onClick={() => handleSelectFilter("admin")}
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+                    filterMode === "admin"
+                      ? "bg-cyan-500 text-white"
+                      : "text-slate-300 hover:text-white"
+                  }`}
+                >
+                  <LuShieldCheck className="w-3 h-3" />
+                  <span>Admin</span>
+                  <span className="font-mono-code text-[10px]">({adminImages.length})</span>
                 </button>
               </div>
             )}
@@ -258,7 +352,7 @@ export default function LightboxModal({
           )}
         </div>
 
-        {/* Adaptive Thumbnail Strip (Portrait thumbnails for Mobile, Landscape for Web!) */}
+        {/* Adaptive Thumbnail Strip */}
         {total > 1 && (
           <div className="flex-none flex items-center gap-2 overflow-x-auto pb-1 pt-0.5 px-1 hide-scrollbar">
             {activeList.map((src, i) => {
@@ -284,7 +378,7 @@ export default function LightboxModal({
                     src={encodeAssetPath(src)}
                     alt={formatScreenshotCaption(src)}
                     loading="lazy"
-                    className={`w-full h-full ${isMob ? "object-contain p-0.5" : "object-cover"}`}
+                    className={`w-full h-full ${isMob ? "object-contain p-0.5" : "object-cover object-top"}`}
                   />
                 </button>
               );

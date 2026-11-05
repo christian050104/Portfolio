@@ -86,7 +86,7 @@ export default function HeroSection() {
       sub: "Web · Desktop · Mobile · AI",
     },
     {
-      value: "80+",
+      value: "145+",
       label: isId ? "Modul Fitur Nyata" : "Feature Modules Shipped",
       sub: isId ? "Terdokumentasi & Teruji" : "Documented & Verified",
     },
@@ -234,7 +234,7 @@ export default function HeroSection() {
                   label: "LinkedIn",
                 },
                 {
-                  href: "https://www.instagram.com/pranata_ex21/",
+                  href: "https://www.instagram.com/rexorion__/",
                   icon: <FaInstagram className="w-4 h-4" />,
                   label: "Instagram",
                 },

@@ -9,6 +9,7 @@ export interface ProjectItem {
   id: string;
   name: string;
   featured: boolean;
+  dualPortal?: boolean;
   category: ProjectCategory;
   accent: "violet" | "cyan" | "emerald" | "blue" | "amber" | "rose";
   year: string;
@@ -34,15 +35,25 @@ export interface ProjectItem {
 
 export function getScreenshotPlatform(src: string): "mobile" | "web" {
   const filename = (src.split("/").pop() || "").toLowerCase();
-  if (
-    filename.includes("mobile") ||
-    filename.includes("flutter") ||
-    filename.includes("android") ||
-    filename.includes("ios")
-  ) {
+  if (/(^|[\s_-])(mobile|flutter|android|ios)([\s_.-]|$)/i.test(filename)) {
     return "mobile";
   }
   return "web";
+}
+
+export function getWebPortalRole(src: string): "storefront" | "admin" {
+  const filename = (src.split("/").pop() || "").toLowerCase();
+  const withoutExt = filename.replace(/\.(jpg|jpeg|png|webp|avif|svg)$/i, "").trim();
+  if (
+    withoutExt.includes("admin") ||
+    withoutExt.startsWith("kelola ") ||
+    withoutExt.includes("statistik kunjungan") ||
+    withoutExt.startsWith("daftar pengunjung") ||
+    withoutExt.startsWith("parameter")
+  ) {
+    return "admin";
+  }
+  return "storefront";
 }
 
 const WORD_FIXES: Record<string, string> = {
@@ -52,8 +63,13 @@ const WORD_FIXES: Record<string, string> = {
   kesehatan: "Kesehatan",
   notikasi: "Notifikasi",
   notifikasi: "Notifikasi",
+  acitivitas: "Aktivitas",
+  aktivitas: "Aktivitas",
   ijin: "Izin",
   izin: "Izin",
+  po: "PO",
+  faq: "FAQ",
+  meta: "SEO Meta",
   per: "per",
   di: "di",
   atau: "/",
@@ -75,9 +91,18 @@ const WORD_FIXES: Record<string, string> = {
 export function formatScreenshotCaption(src: string): string {
   const filename = src.split("/").pop() || "";
   const withoutExt = filename.replace(/\.(jpg|jpeg|png|webp|avif|svg)$/i, "");
-  const cleaned = withoutExt.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+  let cleaned = withoutExt.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
 
-  // Strip trailing WEBSITE / MOBILE tag if present so we can format cleanly
+  // Strip redundant role/project suffixes cleanly while preserving core titles
+  cleaned = cleaned
+    .replace(/\s+di\s+admin$/i, "")
+    .replace(/\s+labtek(?=\s+\d+$|$)/i, "")
+    .replace(/^halaman\s+(?=\S+\s+\S+)/i, "");
+
+  if (/^(kelola|statistik|parameter)\b/i.test(cleaned)) {
+    cleaned = cleaned.replace(/\s+admin$/i, "");
+  }
+
   const platform = getScreenshotPlatform(src);
   const words = cleaned.split(" ");
 
@@ -88,10 +113,8 @@ export function formatScreenshotCaption(src: string): string {
       if (/^\d+$/.test(raw)) return `#${raw}`;
       return lower.charAt(0).toUpperCase() + lower.slice(1);
     })
-    .filter((w, idx, arr) => {
-      // Remove redundant "Web" / "Mobile" word in middle/end when there are other descriptive words
+    .filter((w, _idx, arr) => {
       if (arr.length > 2 && (w === "Web" || w === "Mobile")) {
-        // Keep "Web Login" as "Login Web" -> handled nicely if we strip and append badge in UI, or keep concise
         if (arr.some((other) => other.toLowerCase() === "login")) return true;
         return false;
       }
@@ -439,132 +462,239 @@ const projects: ProjectItem[] = [
     id: "labverse",
     name: "Labverse",
     featured: false,
+    dualPortal: true,
     category: "Fullstack Web",
     accent: "blue",
-    year: "2023",
+    year: "2024",
     imageFolder: "Labverse",
     role: {
       id: "Fullstack Web Developer",
       en: "Fullstack Web Developer",
     },
     impactBadge: {
-      id: "E-Commerce B2B/B2C · Katalog & Checkout",
-      en: "B2B/B2C E-Commerce · Catalog & Order Flow",
+      id: "20 Layar Sistem · Storefront Pelanggan & Backoffice Admin",
+      en: "20 System Screens · Customer Storefront & E-Commerce Admin",
     },
     shortDesc: {
-      id: "Platform e-commerce peralatan dan perlengkapan laboratorium lengkap dengan katalog dinamis, keranjang belanja, dan manajemen pesanan.",
-      en: "Full-featured e-commerce platform for laboratory equipment featuring product catalog, cart, checkout, and order management.",
+      id: "Ekosistem e-commerce instrumen laboratorium & pendidikan yang memadukan Storefront Pelanggan (filter harga/kategori & keranjang) dengan Panel Admin lengkap.",
+      en: "End-to-end laboratory & educational equipment e-commerce uniting a Customer Storefront with a full revenue, order, and promo Admin Backoffice.",
     },
     description: {
-      id: "Platform e-commerce khusus peralatan dan instrumen laboratorium yang dibangun menggunakan Laravel, MySQL, dan Tailwind CSS. Mencakup pencarian katalog berbasis kategori spesifikasi, manajemen keranjang belanja, alur checkout terstruktur, serta panel admin untuk pengelolaan stok dan pesanan pelanggan.",
-      en: "A specialized e-commerce web application for laboratory equipment and scientific supplies built with Laravel, MySQL, and Tailwind CSS. Features searchable product catalogs, shopping cart workflows, order tracking, and an inventory admin dashboard.",
+      id: "Labverse adalah platform e-commerce B2B/B2C khusus peralatan pendidikan dan instrumen laboratorium berbasis Laravel, MySQL, dan Tailwind CSS. Hadir dengan dua portal terintegrasi: Portal Pelanggan untuk penelusuran katalog multi-filter (rentang harga, kategori/subkategori SMK hingga Perguruan Tinggi) serta keranjang belanja, dan Panel Admin komprehensif untuk memantau pendapatan (income), verifikasi pembayaran, status pesanan, kampanye Big Sales, layanan kurir pengiriman, serta statistik kunjungan.",
+      en: "Labverse is a B2B/B2C e-commerce platform for scientific and educational laboratory equipment built with Laravel, MySQL, and Tailwind CSS. It features two integrated portals: a Customer Storefront with price-range & multi-tier category filtering and cart checkout, paired with an Admin Backoffice tracking total revenue, payment verifications, order fulfillment, Big Sales campaigns, shipping services, and visitor analytics.",
+    },
+    challenge: {
+      id: "Pengadaan alat laboratorium pendidikan memiliki rentang spesifikasi serta nominal transaksi besar yang menuntut transparansi stok, verifikasi pembayaran, dan pelacakan pengiriman.",
+      en: "Educational and scientific equipment procurement involves high-value orders requiring multi-tier catalog filtering, payment verification, and structured fulfillment.",
+    },
+    solution: {
+      id: "Membangun arsitektur dua portal (Storefront Pelanggan + Backoffice Admin) di Laravel & MySQL yang menyatukan katalog terfilter, promo Big Sales, konfirmasi pembayaran, dan analitik penjualan.",
+      en: "Engineered a dual-portal Laravel & MySQL platform uniting a filtered customer storefront with an admin backoffice for payment approval, shipping config, and live revenue analytics.",
     },
     tech: ["Laravel", "MySQL", "TailwindCSS", "PHP"],
-    images: [],
+    images: [
+      // Portal Pelanggan / Storefront (6 Layar)
+      "/Labverse/dashboard labverse.png",
+      "/Labverse/halaman dashboard user terdaftar.png",
+      "/Labverse/product labverse.png",
+      "/Labverse/belanja produk.png",
+      "/Labverse/keranjang.png",
+      "/Labverse/login.png",
+      // Panel Admin E-Commerce (14 Layar)
+      "/Labverse/dashboard admin 2.png",
+      "/Labverse/dashboard admin 1.png",
+      "/Labverse/statistik kunjungan admin.png",
+      "/Labverse/kelola pesanan admin.png",
+      "/Labverse/kelola pembayaran admin.png",
+      "/Labverse/kelola produk admin.png",
+      "/Labverse/kelola kategori admin.png",
+      "/Labverse/kelola subkategori admin.png",
+      "/Labverse/kelola big sales.png",
+      "/Labverse/kelola shipping service admin.png",
+      "/Labverse/kelola user admin.png",
+      "/Labverse/kelola sliders.png",
+      "/Labverse/kelola faq admin.png",
+      "/Labverse/parameter admin.png",
+    ],
     github: "https://github.com/christian050104/Labverse",
     highlights: {
       id: [
-        "Katalog produk laboratorium terstruktur dengan filter kategori dan pencarian",
-        "Alur keranjang belanja, checkout, dan pelacakan status pesanan end-to-end",
-        "Panel administrasi pengelolaan inventaris produk dan transaksi di Laravel",
+        "Portal Pelanggan responsif dengan filter rentang harga, kategori/subkategori, dan keranjang belanja",
+        "Dashboard Admin real-time yang merangkum total pendapatan (income), status pembayaran, dan antrean pesanan",
+        "Manajemen kampanye promosi Big Sales, banner slider dinamis, dan pengaturan layanan kurir pengiriman",
+        "Pemantauan statistik kunjungan website serta pengelolaan pengguna, FAQ, dan parameter sistem",
       ],
       en: [
-        "Structured scientific catalog with category filtering and fast search",
-        "End-to-end shopping cart, checkout workflow, and order status tracking",
-        "Comprehensive Laravel admin panel for inventory and transaction management",
+        "Customer Storefront featuring price-range filters, multi-level categories, and cart workflows",
+        "Real-time Admin Dashboard tracking total income, payment verifications, and order queues",
+        "Built-in Big Sales campaign manager, dynamic hero sliders, and shipping service configuration",
+        "Visitor traffic analytics alongside customer management, FAQ CMS, and system parameters",
       ],
     },
     previewModules: {
-      id: ["Katalog Alat Lab", "Keranjang & Checkout", "Pelacakan Pesanan", "Admin Inventaris"],
-      en: ["Lab Supply Catalog", "Cart & Checkout", "Order Tracking", "Inventory Admin"],
+      id: ["Storefront Alat Lab", "Dashboard Income & Order", "Promo Big Sales", "Statistik Kunjungan"],
+      en: ["Lab Storefront", "Income & Order Admin", "Big Sales Engine", "Visitor Analytics"],
     },
   },
   {
     id: "labtek",
     name: "Labtek",
     featured: false,
+    dualPortal: true,
     category: "Fullstack Web",
     accent: "amber",
-    year: "2023",
+    year: "2024",
     imageFolder: "Labtek",
     role: {
       id: "Fullstack Web Developer",
       en: "Fullstack Web Developer",
     },
     impactBadge: {
-      id: "Platform Industri · Sistem Penawaran B2B",
-      en: "Industrial Commerce · B2B Inquiry System",
+      id: "18 Layar Sistem · E-Commerce Industri, Flash Sale & Backoffice",
+      en: "18 System Screens · Industrial Commerce, Flash Sale & Admin",
     },
     shortDesc: {
-      id: "Platform komersial peralatan teknik & industri berbasis Laravel dengan sistem permintaan penawaran (inquiry) dan panel manajemen produk.",
-      en: "Industrial equipment commerce & B2B inquiry platform built with Laravel and MySQL.",
+      id: "Platform komersial peralatan teknik & industri dengan fitur Flash Sale di sisi pelanggan serta dashboard kendali transaksi, pembayaran, dan analitik di sisi Admin.",
+      en: "Industrial equipment commerce platform pairing a Flash Sale customer portal with a complete transaction, payment, and analytics Admin Backoffice.",
     },
     description: {
-      id: "Platform web komersial untuk penyediaan peralatan teknik dan layanan industri. Dibangun dengan Laravel dan MySQL untuk memudahkan klien korporasi menelusuri spesifikasi alat teknik, mengajukan permintaan penawaran (quotation/inquiry), serta memudahkan tim internal mengelola katalog produk.",
-      en: "An industrial commerce and product showcase platform built with Laravel and MySQL, enabling corporate clients to browse technical specifications, submit B2B quotation inquiries, and manage equipment listings.",
+      id: "Labtek adalah platform e-commerce peralatan teknik dan solusi industri berbasis Laravel dan MySQL yang dirancang untuk transaksi skala ritel maupun institusi. Mencakup Portal Pelanggan Terdaftar (pencarian katalog teknik, hitung mundur Flash Sale, wishlist, dan keranjang belanja) serta Panel Admin menyeluruh dengan peringatan antrean pesanan otomatis, rekapitulasi pendapatan, verifikasi pembayaran, manajemen Big Sales, kurir pengiriman, dan analitik pengunjung.",
+      en: "Labtek is an industrial equipment commerce platform built with Laravel and MySQL for institutional and corporate buyers. It combines a Registered Customer Portal (technical catalog search, Flash Sale countdowns, wishlist, and cart) with a comprehensive Admin Dashboard featuring automated order-approval alerts, revenue & payment tracking, Big Sales promotions, shipping management, and traffic statistics.",
+    },
+    challenge: {
+      id: "Penjualan peralatan teknik bernilai tinggi membutuhkan pemantauan status pesanan yang ketat mulai dari persetujuan order, konfirmasi pembayaran, hingga pengiriman.",
+      en: "High-value engineering equipment commerce demands strict visibility across order approval, payment confirmation, and shipping stages.",
+    },
+    solution: {
+      id: "Merancang sistem notifikasi antrean pesanan berwarna di Dashboard Admin yang terhubung langsung dengan portal belanja pelanggan, modul pembayaran, dan manajemen stok.",
+      en: "Built an alert-driven Admin Backoffice tightly synchronized with the customer storefront, payment verification logs, and multi-category product master data.",
     },
     tech: ["Laravel", "MySQL", "Bootstrap", "PHP"],
-    images: [],
+    images: [
+      // Portal Pelanggan / Storefront (4 Layar)
+      "/Labtek/dashboard user terdaftar.png",
+      "/Labtek/produk di user.png",
+      "/Labtek/keranjang user.png",
+      "/Labtek/Login Labtek.png",
+      // Panel Admin E-Commerce (14 Layar)
+      "/Labtek/dashboard admin labtek 2.png",
+      "/Labtek/dashboard admin labtek 1.png",
+      "/Labtek/statistik kunjungan.png",
+      "/Labtek/kelola pesanan admin labtek.png",
+      "/Labtek/kelola pembayaran admin labtek.png",
+      "/Labtek/kelola produk admin labtek.png",
+      "/Labtek/kelola kategori.png",
+      "/Labtek/kelola subkategori.png",
+      "/Labtek/kelola big sales admin labtek.png",
+      "/Labtek/kelola shipping services.png",
+      "/Labtek/kelola user management admin labtek.png",
+      "/Labtek/kelola sliders admin labtek.png",
+      "/Labtek/kelola faq.png",
+      "/Labtek/kelola parameter.png",
+    ],
     github: "https://github.com/christian050104/Labtek",
     highlights: {
       id: [
-        "Manajemen spesifikasi peralatan industri & katalog layanan teknis",
-        "Alur permintaan penawaran (B2B Inquiry) terintegrasi untuk klien perusahaan",
-        "Dashboard CMS internal berbasis Laravel & MySQL",
+        "Portal Pelanggan Terdaftar dengan fitur pencarian produk teknik, Flash Sale, dan keranjang belanja",
+        "Dashboard Admin ganda: kartu peringatan status pesanan mendesak serta rekapitulasi pendapatan & pembayaran",
+        "Pengelolaan katalog produk, kategori, subkategori, promo Big Sales, dan layanan pengiriman",
+        "Modul manajemen pengguna (user management), statistik kunjungan harian, slider promosi, dan FAQ",
       ],
       en: [
-        "Detailed industrial equipment catalog and technical specification management",
-        "Integrated B2B quotation & customer inquiry workflow",
-        "Role-protected Laravel & MySQL administration dashboard",
+        "Registered Customer Portal with technical catalog filtering, Flash Sale promos, and cart checkout",
+        "Dual-view Admin Dashboard featuring actionable order-queue alerts and live income/payment logs",
+        "End-to-end management for products, categories, subcategories, Big Sales, and shipping carriers",
+        "Built-in user management, visitor traffic analytics, promotional sliders, and FAQ CMS",
       ],
     },
     previewModules: {
-      id: ["Katalog Teknik", "Spesifikasi Industri", "Form Penawaran B2B", "Dashboard CMS"],
-      en: ["Technical Catalog", "Industrial Specs", "B2B Quote Inquiry", "Admin CMS"],
+      id: ["Storefront & Flash Sale", "Monitor Antrean Order", "Verifikasi Pembayaran", "Analitik Kunjungan"],
+      en: ["Flash Sale Storefront", "Order Queue Monitor", "Payment Verification", "Traffic Analytics"],
     },
   },
   {
     id: "compro-ags",
     name: "Compro AGS",
     featured: false,
+    dualPortal: true,
     category: "Fullstack Web",
     accent: "rose",
-    year: "2023",
+    year: "2024",
     imageFolder: "ComproAGS",
     role: {
       id: "Fullstack Web Developer",
       en: "Fullstack Web Developer",
     },
     impactBadge: {
-      id: "Digital Branding · CMS Dinamis",
-      en: "Corporate Branding · Dynamic CMS",
+      id: "27 Layar Sistem · Portal Korporasi & Alur Pengadaan B2B",
+      en: "27 System Screens · Corporate Portal & B2B Procurement ERP",
     },
     shortDesc: {
-      id: "Website profil perusahaan (Company Profile) modern untuk AGS dengan manajemen konten layanan, portofolio, dan kontak bisnis.",
-      en: "Modern corporate profile website with dynamic service showcase, portfolio management, and lead capture.",
+      id: "Portal korporasi PT Arkamaya Guna Saharsa yang terintegrasi dengan sistem pengadaan B2B lengkap (Quotation, Negosiasi, PO, Proforma Invoice, hingga Tiket Layanan).",
+      en: "Corporate portal for PT Arkamaya Guna Saharsa integrated with a full B2B procurement backoffice (Quotation, Negotiation, PO, Proforma Invoice, & Service Ticketing).",
     },
     description: {
-      id: "Website Company Profile profesional untuk memperkuat kredibilitas digital AGS. Dilengkapi halaman showcase layanan unggulan, rekam jejak proyek perusahaan, profil tim manajemen, dan sistem pengelolaan pesan klien yang mudah diperbarui oleh tim internal tanpa menyentuh kode.",
-      en: "A responsive corporate profile website designed for AGS to showcase core business services, project track records, leadership profiles, and client inquiries — backed by a clean Laravel content management panel.",
+      id: "Compro AGS adalah ekosistem web korporasi dan manajemen bisnis B2B untuk PT Arkamaya Guna Saharsa. Di sisi depan, menyajikan Portal Publik modern multibahasa untuk profil perusahaan, katalog peralatan uji laboratorium, dan aktivitas korporasi. Di sisi belakang, dilengkapi 22 modul Panel Admin B2B untuk menangani siklus pengadaan end-to-end: Permintaan Quotation, Negosiasi Harga, Purchase Order (PO), Proforma Invoice, Invoice, Tiket Layanan purnajual, manajemen Distributor & Member, hingga optimasi SEO Meta.",
+      en: "Compro AGS is a dual-portal corporate showcase and B2B procurement system built for PT Arkamaya Guna Saharsa. Its public portal presents multilingual company credentials, laboratory testing equipment catalogs, and corporate activities, while its 22-screen Admin Backoffice powers the complete B2B deal lifecycle: Quotation Requests, Price Negotiation, Purchase Orders (PO), Proforma Invoices, Final Invoices, Service Ticketing, Distributor/Member directories, and SEO Meta CMS.",
+    },
+    challenge: {
+      id: "Perusahaan penyedia alat laboratorium & rekayasa teknik membutuhkan website korporasi yang kredibel sekaligus mampu mengelola alur negosiasi dan dokumen pengadaan B2B yang kompleks.",
+      en: "B2B engineering & lab equipment suppliers need both a credible public corporate presence and a structured backoffice for multi-step quotation, negotiation, PO, and invoicing.",
+    },
+    solution: {
+      id: "Mengintegrasikan Company Profile dinamis dengan Backoffice Pengadaan B2B 22 modul di Laravel & MySQL — mencakup alur Quotation hingga Invoice, Tiketing Layanan, dan analitik pengunjung.",
+      en: "Unified a dynamic corporate web portal with a 22-module Laravel & MySQL B2B backoffice covering Quotations, Negotiations, POs, Proforma/Final Invoices, Service Tickets, and SEO CMS.",
     },
     tech: ["Laravel", "MySQL", "TailwindCSS", "PHP"],
-    images: [],
-    github: "https://github.com/christian050104",
+    images: [
+      // Portal Publik & Pelanggan (5 Layar)
+      "/ComproAGS/dashboard user.png",
+      "/ComproAGS/about user.png",
+      "/ComproAGS/product user.png",
+      "/ComproAGS/acitivitas user.png",
+      "/ComproAGS/login.png",
+      // Panel Admin B2B & CMS (22 Layar)
+      "/ComproAGS/dashboard admin.png",
+      "/ComproAGS/kelola permintaan quotation di admin.png",
+      "/ComproAGS/kelola negosiasi di admin.png",
+      "/ComproAGS/kelola po di admin.png",
+      "/ComproAGS/kelola proforma invoice di admin.png",
+      "/ComproAGS/kelola daftar invoice di admin.png",
+      "/ComproAGS/kelola tiket layanan di admin.png",
+      "/ComproAGS/kelola daftar produk di admin.png",
+      "/ComproAGS/kelola kategori di admin.png",
+      "/ComproAGS/kelola merek di admin.png",
+      "/ComproAGS/kelola distributor di admin.png",
+      "/ComproAGS/kelola member di admin.png",
+      "/ComproAGS/daftar pengunjung di admin.png",
+      "/ComproAGS/kelola guest messages di admin.png",
+      "/ComproAGS/kelola pertanyaan di admin.png",
+      "/ComproAGS/kelola aktivitas di admin.png",
+      "/ComproAGS/kelola semua slider di admin.png",
+      "/ComproAGS/kelola bidang perusahaan di admin.png",
+      "/ComproAGS/kelola lokasi di admin.png",
+      "/ComproAGS/kelola parameter perusahaan di admin.png",
+      "/ComproAGS/kelola daftar meta di admin.png",
+      "/ComproAGS/kelola admin di admin.png",
+    ],
+    github: "https://github.com/christian050104/Compro_Arkamaya_Guna_Saharsa",
     highlights: {
       id: [
-        "Desain responsif berorientasi kredibilitas bisnis dan kecepatan akses",
-        "CMS kustom untuk pembaruan portofolio, layanan, dan anggota tim secara mandiri",
-        "Manajemen pesan masuk calon mitra & klien langsung dari dashboard",
+        "Siklus pengadaan B2B terpadu: Permintaan Quotation → Negosiasi → Purchase Order (PO) → Proforma Invoice → Invoice",
+        "Portal Publik korporasi multibahasa dengan katalog produk, aktivitas perusahaan, dan integrasi kontak cepat",
+        "Sistem Tiket Layanan (Service Ticketing), pengelolaan jaringan Distributor, Member, dan kotak masuk pesan klien",
+        "CMS mandiri lengkap: manajemen banner slider, profil & lokasi perusahaan, analitik pengunjung harian, serta SEO Meta",
       ],
       en: [
-        "Responsive, credibility-focused corporate presentation and fast page loads",
-        "Custom CMS for self-service updates to services, portfolio, and team members",
-        "Built-in lead capture and client inquiry management",
+        "End-to-end B2B procurement pipeline: Quotation Requests → Price Negotiation → Purchase Orders (PO) → Proforma & Final Invoices",
+        "Multilingual corporate public portal showcasing products, company activities, and instant lead capture",
+        "Built-in Service Ticketing system, Distributor & Member management, and guest inquiry inbox",
+        "Full self-service CMS with hero sliders, company parameters, daily visitor charts, and custom SEO Meta controls",
       ],
     },
     previewModules: {
-      id: ["Profil & Layanan", "Galeri Portofolio", "Manajemen Tim", "Kotak Masuk Klien"],
-      en: ["Services Showcase", "Project Portfolio", "Team Directory", "Client Lead Inbox"],
+      id: ["Portal Korporasi", "Quotation & Negosiasi B2B", "PO & Proforma Invoice", "Tiket Layanan & CMS"],
+      en: ["Corporate Portal", "B2B Quote & Negotiation", "PO & Proforma Invoice", "Service Tickets & CMS"],
     },
   },
 ];

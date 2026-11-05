@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import {
   LuEye,
@@ -11,6 +11,8 @@ import {
   LuLayers,
   LuMonitor,
   LuSmartphone,
+  LuGlobe,
+  LuShieldCheck,
 } from "react-icons/lu";
 import { FaGithub } from "react-icons/fa";
 import projects, {
@@ -18,9 +20,10 @@ import projects, {
   encodeAssetPath,
   formatScreenshotCaption,
   getScreenshotPlatform,
+  getWebPortalRole,
 } from "@/data/projects";
 import TechIcon from "@/components/ui/TechIcon";
-import LightboxModal from "@/components/ui/LightboxModal";
+import LightboxModal, { type LightboxFilterMode } from "@/components/ui/LightboxModal";
 import { useAppPreferences } from "@/context/AppPreferencesContext";
 
 const FILTERS = ["All", "AI & ML", "Desktop", "Web & Mobile", "Fullstack Web"] as const;
@@ -33,6 +36,15 @@ const ACCENT_GRADIENTS: Record<ProjectItem["accent"], string> = {
   blue: "from-blue-600/25 via-indigo-600/15 to-transparent",
   amber: "from-amber-500/25 via-orange-600/15 to-transparent",
   rose: "from-rose-500/25 via-pink-600/15 to-transparent",
+};
+
+const PORTAL_STUDIO_BG: Record<ProjectItem["accent"], string> = {
+  violet: "from-slate-950 via-violet-950/55 to-slate-900",
+  cyan: "from-slate-950 via-cyan-950/55 to-slate-900",
+  emerald: "from-slate-950 via-emerald-950/55 to-slate-900",
+  blue: "from-slate-950 via-blue-950/60 to-slate-900",
+  amber: "from-slate-950 via-amber-950/45 to-slate-900",
+  rose: "from-slate-950 via-rose-950/50 to-slate-900",
 };
 
 function ArchitectureBlueprint({
@@ -159,6 +171,100 @@ function DualPlatformCardCover({
   );
 }
 
+/** Layered Dual-Browser Cover for Two-Sided Web Systems (Storefront / Public Portal + Admin Backoffice) */
+function DualPortalCardCover({
+  storefrontCover,
+  adminCover,
+  projectName,
+  accent,
+  storefrontCount,
+  adminCount,
+}: {
+  storefrontCover: string;
+  adminCover: string;
+  projectName: string;
+  accent: ProjectItem["accent"];
+  storefrontCount: number;
+  adminCount: number;
+}) {
+  const studioGrad = PORTAL_STUDIO_BG[accent];
+
+  return (
+    <div
+      className={`relative w-full aspect-video bg-gradient-to-br ${studioGrad} overflow-hidden p-3 select-none`}
+    >
+      {/* Subtle Ambient Dot Pattern */}
+      <div
+        className="absolute inset-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage:
+            "radial-gradient(rgba(148, 163, 184, 0.35) 1px, transparent 1px)",
+          backgroundSize: "14px 14px",
+        }}
+      />
+
+      {/* Primary Browser Window: Customer / Public Storefront (Top-Left, 21:10 ratio so 0% side crop!) */}
+      <div className="relative z-10 w-[80%] mt-5 rounded-xl overflow-hidden border border-white/20 bg-slate-900 shadow-xl group-hover:scale-[1.015] transition-transform duration-500">
+        <div className="h-4 px-2 bg-slate-900 border-b border-white/10 flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-400/85" />
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400/85" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/85" />
+          </div>
+          <span className="text-[8px] font-mono-code text-sky-300/90 tracking-tight">
+            portal.user
+          </span>
+        </div>
+        <div className="w-full aspect-[21/10] bg-white overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={encodeAssetPath(storefrontCover)}
+            alt={`${projectName} User Portal`}
+            loading="lazy"
+            className="w-full h-full object-cover object-top"
+          />
+        </div>
+      </div>
+
+      {/* Secondary Elevated Browser Window: Admin Backoffice (Bottom-Right Foreground Overlap) */}
+      <div className="absolute right-2.5 bottom-2.5 w-[58%] rounded-xl overflow-hidden border border-cyan-400/35 bg-slate-900 shadow-[0_14px_32px_rgba(0,0,0,0.88)] group-hover:-translate-y-1 group-hover:scale-[1.03] transition-all duration-500 z-20">
+        <div className="h-3.5 px-2 bg-slate-950 border-b border-white/10 flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-400/80" />
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400/80" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
+          </div>
+          <span className="text-[8px] font-mono-code text-amber-300 tracking-tight">
+            admin.backoffice
+          </span>
+        </div>
+        <div className="w-full aspect-[21/10] bg-white overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={encodeAssetPath(adminCover)}
+            alt={`${projectName} Admin Panel`}
+            loading="lazy"
+            className="w-full h-full object-cover object-top"
+          />
+        </div>
+      </div>
+
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none z-15" />
+
+      {/* Dual Portal Count Pill */}
+      <div className="absolute bottom-2.5 left-3 px-2.5 py-1 rounded-lg bg-slate-950/90 backdrop-blur-md border border-white/15 text-[10px] font-mono-code text-white flex items-center gap-1.5 z-30 shadow-lg">
+        <span className="inline-flex items-center gap-1 text-sky-300">
+          <LuGlobe className="w-3 h-3" /> {storefrontCount} User
+        </span>
+        <span className="text-slate-500">·</span>
+        <span className="inline-flex items-center gap-1 text-amber-300">
+          <LuShieldCheck className="w-3 h-3" /> {adminCount} Admin
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function ProjectDetailModal({
   project,
   locale,
@@ -168,20 +274,28 @@ function ProjectDetailModal({
   project: ProjectItem;
   locale: "id" | "en";
   onClose: () => void;
-  onOpenLightbox: (startIdx: number, platform: "all" | "web" | "mobile") => void;
+  onOpenLightbox: (startIdx: number, filterMode: LightboxFilterMode) => void;
 }) {
   const isId = locale === "id";
-  const [detailTab, setDetailTab] = useState<"web" | "mobile">("web");
+  const [detailPlatformTab, setDetailPlatformTab] = useState<"web" | "mobile">("web");
+  const [detailPortalTab, setDetailPortalTab] = useState<"storefront" | "admin">("storefront");
+  const [previewIdx, setPreviewIdx] = useState(0);
 
-  const webImages = useMemo(
-    () => project.images.filter((src) => getScreenshotPlatform(src) === "web"),
-    [project.images]
-  );
-  const mobileImages = useMemo(
-    () => project.images.filter((src) => getScreenshotPlatform(src) === "mobile"),
-    [project.images]
-  );
+  const webImages = project.images.filter((src) => getScreenshotPlatform(src) === "web");
+  const mobileImages = project.images.filter((src) => getScreenshotPlatform(src) === "mobile");
   const isDualPlatform = webImages.length > 0 && mobileImages.length > 0;
+
+  const storefrontImages = project.dualPortal
+    ? project.images.filter((src) => getWebPortalRole(src) === "storefront")
+    : [];
+  const adminImages = project.dualPortal
+    ? project.images.filter((src) => getWebPortalRole(src) === "admin")
+    : [];
+  const isDualPortal =
+    !isDualPlatform &&
+    Boolean(project.dualPortal) &&
+    storefrontImages.length > 0 &&
+    adminImages.length > 0;
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -217,6 +331,9 @@ function ProjectDetailModal({
                 {project.category}
               </span>
               <span className="text-xs font-mono-code theme-muted">{project.year}</span>
+              <span className="text-xs font-semibold theme-emerald-text">
+                • {project.impactBadge[locale]}
+              </span>
             </div>
             <h3 className="text-2xl sm:text-3xl font-extrabold theme-heading">
               {project.name}
@@ -235,15 +352,19 @@ function ProjectDetailModal({
           </button>
         </div>
 
-        {/* Visual Preview (Dual-Platform Aware!) */}
+        {/* Visual Preview (Dual-Platform & Dual-Portal Aware!) */}
         {project.images.length > 0 ? (
           <div className="space-y-3">
+            {/* Switcher 1: Website vs Flutter Mobile */}
             {isDualPlatform && (
               <div className="flex items-center gap-2 p-1.5 rounded-2xl surface-subtle">
                 <button
-                  onClick={() => setDetailTab("web")}
+                  onClick={() => {
+                    setDetailPlatformTab("web");
+                    setPreviewIdx(0);
+                  }}
                   className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold inline-flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                    detailTab === "web"
+                    detailPlatformTab === "web"
                       ? "btn-primary"
                       : "theme-muted hover:theme-heading"
                   }`}
@@ -252,9 +373,12 @@ function ProjectDetailModal({
                   <span>{isId ? `Versi Website (${webImages.length})` : `Website (${webImages.length})`}</span>
                 </button>
                 <button
-                  onClick={() => setDetailTab("mobile")}
+                  onClick={() => {
+                    setDetailPlatformTab("mobile");
+                    setPreviewIdx(0);
+                  }}
                   className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold inline-flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                    detailTab === "mobile"
+                    detailPlatformTab === "mobile"
                       ? "btn-primary"
                       : "theme-muted hover:theme-heading"
                   }`}
@@ -267,7 +391,49 @@ function ProjectDetailModal({
               </div>
             )}
 
-            {isDualPlatform && detailTab === "mobile" ? (
+            {/* Switcher 2: Customer/Public Portal vs Admin Backoffice */}
+            {isDualPortal && (
+              <div className="flex items-center gap-2 p-1.5 rounded-2xl surface-subtle">
+                <button
+                  onClick={() => {
+                    setDetailPortalTab("storefront");
+                    setPreviewIdx(0);
+                  }}
+                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold inline-flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                    detailPortalTab === "storefront"
+                      ? "btn-primary"
+                      : "theme-muted hover:theme-heading"
+                  }`}
+                >
+                  <LuGlobe className="w-4 h-4" />
+                  <span>
+                    {isId
+                      ? `Portal Pelanggan / Publik (${storefrontImages.length})`
+                      : `Customer / Public Portal (${storefrontImages.length})`}
+                  </span>
+                </button>
+                <button
+                  onClick={() => {
+                    setDetailPortalTab("admin");
+                    setPreviewIdx(0);
+                  }}
+                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold inline-flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                    detailPortalTab === "admin"
+                      ? "btn-primary"
+                      : "theme-muted hover:theme-heading"
+                  }`}
+                >
+                  <LuShieldCheck className="w-4 h-4" />
+                  <span>
+                    {isId
+                      ? `Panel Admin & Backoffice (${adminImages.length})`
+                      : `Admin & Backoffice (${adminImages.length})`}
+                  </span>
+                </button>
+              </div>
+            )}
+
+            {isDualPlatform && detailPlatformTab === "mobile" ? (
               <div className="space-y-3">
                 {/* 3-Up Portrait Mobile Showcase Stage */}
                 <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl border border-[var(--border-strong)] bg-gradient-to-br from-slate-950 via-indigo-950/40 to-slate-900">
@@ -290,7 +456,6 @@ function ProjectDetailModal({
                   ))}
                 </div>
 
-                {/* Remaining Mobile Thumbnails */}
                 {mobileImages.length > 3 && (
                   <div className="flex items-center gap-2 overflow-x-auto pb-1 hide-scrollbar">
                     {mobileImages.map((img, i) => (
@@ -308,48 +473,97 @@ function ProjectDetailModal({
             ) : (
               <div className="space-y-3">
                 {(() => {
-                  const list = isDualPlatform ? webImages : project.images;
-                  const plat = isDualPlatform ? "web" : "all";
+                  const list = isDualPlatform
+                    ? webImages
+                    : isDualPortal
+                    ? detailPortalTab === "admin"
+                      ? adminImages
+                      : storefrontImages
+                    : project.images;
+                  const filterArg: LightboxFilterMode = isDualPlatform
+                    ? "web"
+                    : isDualPortal
+                    ? detailPortalTab
+                    : "all";
+                  const safePreviewIdx = previewIdx < list.length ? previewIdx : 0;
+                  const activePreviewSrc = list[safePreviewIdx];
+
                   return (
                     <>
-                      <div
-                        onClick={() => onOpenLightbox(0, plat)}
-                        className="group relative w-full aspect-video rounded-2xl overflow-hidden border border-[var(--border-strong)] bg-slate-950 cursor-zoom-in"
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={encodeAssetPath(list[0])}
-                          alt={project.name}
-                          className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
-                        />
-                        <div className="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/80 text-white text-xs font-semibold flex items-center gap-1.5 border border-white/15">
-                          <LuMaximize2 className="w-3.5 h-3.5 text-cyan-400" />
-                          <span>
-                            {isId
-                              ? `Buka ${list.length} Layar ${isDualPlatform ? "Website" : ""}`
-                              : `View ${list.length} ${isDualPlatform ? "Web" : ""} Screenshots`}
+                      {/* Browser-Framed Interactive Stage (21/10 for wide Dual-Portal web captures so 0% is cropped!) */}
+                      <div className="rounded-2xl overflow-hidden border border-[var(--border-strong)] bg-slate-950 shadow-xl">
+                        <div className="px-3.5 py-2 bg-slate-900 border-b border-white/10 flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-2.5 h-2.5 rounded-full bg-rose-400/80" />
+                            <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
+                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
+                            <span className="ml-2 text-xs font-mono-code text-cyan-300 truncate max-w-[220px] sm:max-w-xs">
+                              {formatScreenshotCaption(activePreviewSrc)}
+                            </span>
+                          </div>
+                          <span className="text-[11px] font-mono-code text-slate-400">
+                            {safePreviewIdx + 1} / {list.length}
                           </span>
+                        </div>
+
+                        <div
+                          onClick={() => onOpenLightbox(safePreviewIdx, filterArg)}
+                          className={`group relative w-full ${
+                            isDualPortal ? "aspect-[21/10]" : "aspect-video"
+                          } bg-slate-950 overflow-hidden cursor-zoom-in`}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={encodeAssetPath(activePreviewSrc)}
+                            alt={`${project.name} — ${formatScreenshotCaption(activePreviewSrc)}`}
+                            className="w-full h-full object-cover object-top group-hover:scale-[1.015] transition-transform duration-300"
+                          />
+                          <div className="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md text-white text-xs font-semibold flex items-center gap-1.5 border border-white/15 shadow-lg">
+                            <LuMaximize2 className="w-3.5 h-3.5 text-cyan-400" />
+                            <span>
+                              {isId
+                                ? `Perbesar (${list.length} Layar)`
+                                : `Fullscreen (${list.length} Screens)`}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
+                      {/* Interactive Module Selector Strip */}
                       {list.length > 1 && (
-                        <div className="flex items-center gap-2 overflow-x-auto pb-1 hide-scrollbar">
-                          {list.slice(0, 10).map((img, i) => (
-                            <button
-                              key={img}
-                              onClick={() => onOpenLightbox(i, plat)}
-                              className="flex-shrink-0 w-24 h-14 rounded-xl overflow-hidden border border-[var(--border-subtle)] hover:border-cyan-400 transition-all cursor-pointer"
-                              title={formatScreenshotCaption(img)}
-                            >
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={encodeAssetPath(img)}
-                                alt={formatScreenshotCaption(img)}
-                                loading="lazy"
-                                className="w-full h-full object-cover"
-                              />
-                            </button>
-                          ))}
+                        <div className="flex items-center gap-2 overflow-x-auto pb-1.5 hide-scrollbar">
+                          {list.map((img, i) => {
+                            const selected = i === safePreviewIdx;
+                            return (
+                              <button
+                                key={img}
+                                onClick={() => setPreviewIdx(i)}
+                                title={formatScreenshotCaption(img)}
+                                className={`flex-shrink-0 flex items-center gap-2 p-1.5 pr-3 rounded-xl border transition-all cursor-pointer ${
+                                  selected
+                                    ? "border-cyan-400 bg-cyan-500/12 shadow-sm"
+                                    : "surface-subtle hover:border-cyan-500/40 opacity-80 hover:opacity-100"
+                                }`}
+                              >
+                                <div className="w-12 h-8 rounded-lg overflow-hidden bg-slate-900 border border-white/10 flex-shrink-0">
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src={encodeAssetPath(img)}
+                                    alt={formatScreenshotCaption(img)}
+                                    loading="lazy"
+                                    className="w-full h-full object-cover object-top"
+                                  />
+                                </div>
+                                <span
+                                  className={`text-xs font-medium whitespace-nowrap ${
+                                    selected ? "theme-cyan-text font-bold" : "theme-body"
+                                  }`}
+                                >
+                                  {formatScreenshotCaption(img)}
+                                </span>
+                              </button>
+                            );
+                          })}
                         </div>
                       )}
                     </>
@@ -368,6 +582,28 @@ function ProjectDetailModal({
         <p className="text-sm sm:text-base theme-body leading-relaxed">
           {project.description[locale]}
         </p>
+
+        {/* Challenge & Solution Executive Summary (when available) */}
+        {project.challenge && project.solution && (
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div className="p-4 rounded-2xl surface-subtle space-y-1.5">
+              <p className="text-[11px] font-mono-code font-bold uppercase tracking-wider text-amber-500">
+                {isId ? "Tantangan Bisnis" : "Problem & Context"}
+              </p>
+              <p className="text-xs sm:text-sm theme-body leading-relaxed">
+                {project.challenge[locale]}
+              </p>
+            </div>
+            <div className="p-4 rounded-2xl surface-subtle space-y-1.5">
+              <p className="text-[11px] font-mono-code font-bold uppercase tracking-wider theme-emerald-text">
+                {isId ? "Solusi Arsitektur" : "Engineered Solution"}
+              </p>
+              <p className="text-xs sm:text-sm theme-body leading-relaxed">
+                {project.solution[locale]}
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Highlights */}
         {project.highlights[locale].length > 0 && (
@@ -409,12 +645,19 @@ function ProjectDetailModal({
           {project.images.length > 0 && (
             <button
               onClick={() =>
-                onOpenLightbox(0, isDualPlatform ? detailTab : "all")
+                onOpenLightbox(
+                  previewIdx,
+                  isDualPlatform
+                    ? detailPlatformTab
+                    : isDualPortal
+                    ? detailPortalTab
+                    : "all"
+                )
               }
               className="btn-secondary px-4 py-2.5 text-xs sm:text-sm inline-flex items-center gap-2 cursor-pointer"
             >
               <LuMaximize2 className="w-4 h-4 theme-cyan-text" />
-              <span>{isId ? "Layar Penuh" : "Fullscreen Gallery"}</span>
+              <span>{isId ? "Galeri Layar Penuh" : "Fullscreen Gallery"}</span>
             </button>
           )}
           <a
@@ -445,7 +688,7 @@ export default function ProjectsSection({
   const [lightboxState, setLightboxState] = useState<{
     project: ProjectItem;
     startIdx: number;
-    platform: "all" | "web" | "mobile";
+    platform: LightboxFilterMode;
   } | null>(null);
 
   const isId = locale === "id";
@@ -486,8 +729,8 @@ export default function ProjectsSection({
         </h2>
         <p className="theme-muted text-sm max-w-xl mx-auto">
           {isId
-            ? "Filter berdasarkan domain teknologi atau klik proyek mana pun untuk menelusuri versi Website, Mobile, maupun arsitekturnya."
-            : "Filter by domain or inspect any card to explore Website portals, Flutter Mobile screens, and system architecture."}
+            ? "Filter berdasarkan domain teknologi atau klik proyek mana pun untuk menelusuri Portal Pelanggan, Panel Admin, hingga aplikasi Mobile."
+            : "Filter by domain or inspect any project to explore Customer Storefronts, Admin Backoffices, and Flutter Mobile screens."}
         </p>
         <div className="section-divider" />
       </div>
@@ -527,6 +770,18 @@ export default function ProjectsSection({
           const mobImgs = proj.images.filter((s) => getScreenshotPlatform(s) === "mobile");
           const isDual = webImgs.length > 0 && mobImgs.length > 0;
 
+          const storefrontImgs = proj.dualPortal
+            ? proj.images.filter((s) => getWebPortalRole(s) === "storefront")
+            : [];
+          const adminImgs = proj.dualPortal
+            ? proj.images.filter((s) => getWebPortalRole(s) === "admin")
+            : [];
+          const isDualPortalCard =
+            !isDual &&
+            Boolean(proj.dualPortal) &&
+            storefrontImgs.length > 0 &&
+            adminImgs.length > 0;
+
           return (
             <article
               key={proj.id}
@@ -551,6 +806,15 @@ export default function ProjectsSection({
                       mobileCount={mobImgs.length}
                       isId={isId}
                     />
+                  ) : isDualPortalCard ? (
+                    <DualPortalCardCover
+                      storefrontCover={storefrontImgs[0]}
+                      adminCover={adminImgs[0]}
+                      projectName={proj.name}
+                      accent={proj.accent}
+                      storefrontCount={storefrontImgs.length}
+                      adminCount={adminImgs.length}
+                    />
                   ) : hasImages ? (
                     <div className="relative w-full aspect-video bg-slate-950 overflow-hidden">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -574,12 +838,12 @@ export default function ProjectsSection({
                   )}
 
                   {/* Top-left Category Tag */}
-                  <div className="absolute top-3 left-3 flex items-center gap-1.5 z-20">
-                    <span className="px-2.5 py-1 rounded-lg bg-slate-950/85 backdrop-blur-md border border-white/15 text-[11px] font-bold text-white">
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 z-30">
+                    <span className="px-2.5 py-1 rounded-lg bg-slate-950/85 backdrop-blur-md border border-white/15 text-[11px] font-bold text-white shadow-md">
                       {proj.category}
                     </span>
                     {proj.featured && (
-                      <span className="px-2 py-1 rounded-lg bg-cyan-500/90 text-[10px] font-extrabold text-white uppercase tracking-wider">
+                      <span className="px-2 py-1 rounded-lg bg-cyan-500/90 text-[10px] font-extrabold text-white uppercase tracking-wider shadow-md">
                         Flagship
                       </span>
                     )}
@@ -658,10 +922,10 @@ export default function ProjectsSection({
           project={selectedProject}
           locale={locale}
           onClose={() => setSelectedProject(null)}
-          onOpenLightbox={(startIdx, platform) => {
+          onOpenLightbox={(startIdx, filterMode) => {
             const target = selectedProject;
             setSelectedProject(null);
-            setLightboxState({ project: target, startIdx, platform });
+            setLightboxState({ project: target, startIdx, platform: filterMode });
           }}
         />
       )}
@@ -671,6 +935,7 @@ export default function ProjectsSection({
         <LightboxModal
           images={lightboxState.project.images}
           projectName={lightboxState.project.name}
+          dualPortal={lightboxState.project.dualPortal}
           startIndex={lightboxState.startIdx}
           initialPlatform={lightboxState.platform}
           onClose={() => setLightboxState(null)}
