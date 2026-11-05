@@ -91,11 +91,12 @@ export default function SkillsSection() {
       </div>
 
       {/* Category Bento Cards */}
-      <div
-        className={`reveal grid gap-5 ${
-          visibleCategories.length === 1 ? "grid-cols-1 max-w-4xl mx-auto" : "lg:grid-cols-2"
-        }`}
-      >
+      <div className="reveal">
+        <div
+          className={`grid gap-5 ${
+            visibleCategories.length === 1 ? "grid-cols-1 max-w-4xl mx-auto" : "lg:grid-cols-2"
+          }`}
+        >
         {visibleCategories.map((cat, idx) => {
           const Icon = CATEGORY_ICONS[cat.id] ?? LuServer;
           const isWide =
@@ -176,6 +177,7 @@ export default function SkillsSection() {
             </div>
           );
         })}
+        </div>
       </div>
     </section>
   );

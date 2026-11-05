@@ -8,18 +8,20 @@ export default function useScrollReveal() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            entry.target.setAttribute("data-revealed", "true");
             entry.target.classList.add("visible");
+            intersectionObserver.unobserve(entry.target);
           }
         });
       },
       {
-        threshold: 0.08,
-        rootMargin: "0px 0px -40px 0px",
+        threshold: 0.05,
+        rootMargin: "0px 0px -20px 0px",
       }
     );
 
     const observeAll = () => {
-      const elements = document.querySelectorAll(".reveal:not(.visible)");
+      const elements = document.querySelectorAll('.reveal:not([data-revealed="true"])');
       elements.forEach((el) => intersectionObserver.observe(el));
     };
 
