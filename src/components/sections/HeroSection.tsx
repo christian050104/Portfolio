@@ -78,12 +78,12 @@ export default function HeroSection() {
 
   const metrics = [
     {
-      value: "3+",
-      label: isId ? "Tahun Pengalaman" : "Years Coding & Building",
-      sub: isId ? "Pengembangan End-to-End" : "End-to-End Software Delivery",
+      value: "1+",
+      label: isId ? "Tahun Pengalaman" : "Years Experience",
+      sub: isId ? "R&D (Okt 2025–Kini) & Magang" : "R&D (Oct 2025–Now) & Intern",
     },
     {
-      value: "7+",
+      value: "7",
       label: isId ? "Sistem Terbangun" : "Production Systems",
       sub: isId ? "Dari AI hingga E-Commerce" : "Spanning AI to E-Commerce",
     },
@@ -93,7 +93,7 @@ export default function HeroSection() {
       sub: "Web · Desktop · Mobile · AI",
     },
     {
-      value: "145+",
+      value: "148",
       label: isId ? "Modul Fitur Nyata" : "Feature Modules Shipped",
       sub: isId ? "Terdokumentasi & Teruji" : "Documented & Verified",
     },

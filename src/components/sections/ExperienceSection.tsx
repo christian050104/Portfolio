@@ -54,8 +54,8 @@ export default function ExperienceSection() {
         </h2>
         <p className="theme-muted text-sm max-w-2xl mx-auto">
           {isId
-            ? "Berperan aktif sebagai IT Engineer di Divisi Riset & Pengembangan (R&D) sejak Oktober 2025 setelah lebih dari 3 tahun membangun sistem fullstack."
-            : "Serving as an IT Engineer in Research & Development (R&D) since October 2025, backed by 3+ years of end-to-end software delivery."}
+            ? "Berperan aktif sebagai IT Engineer di Divisi Riset & Pengembangan (R&D) sejak Oktober 2025, melanjutkan rekam jejak pengembangan fullstack dan magang industri sejak 2024."
+            : "Serving as an IT Engineer in Research & Development (R&D) since October 2025, building on fullstack software delivery and industrial internship experience since 2024."}
         </p>
         <div className="section-divider" />
       </div>
