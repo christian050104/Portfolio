@@ -19,7 +19,6 @@ export default function AboutSection() {
   const pillars = [
     {
       icon: LuScanFace,
-      accentBg: "bg-violet-500/15 text-violet-400 border-violet-500/25",
       title: isId ? "AI & Integrasi Perangkat IFP" : "Applied AI & IFP Integration",
       description: isId
         ? "Membangun FaceLog yang terinstal langsung pada perangkat IFP (Interactive Flat Panel) & Kiosk Scanner untuk presensi wajah real-time."
@@ -27,7 +26,6 @@ export default function AboutSection() {
     },
     {
       icon: LuMonitor,
-      accentBg: "bg-cyan-500/15 text-cyan-400 border-cyan-500/25",
       title: isId ? "Arsitektur Desktop Lintas OS" : "Cross-Platform Desktop Suites",
       description: isId
         ? "Merancang EduSphere (34+ layar fitur) dengan Electron, komunikasi kelas real-time, monitoring ujian, dan kendali perangkat kelas."
@@ -35,7 +33,6 @@ export default function AboutSection() {
     },
     {
       icon: LuRadio,
-      accentBg: "bg-emerald-500/15 text-emerald-400 border-emerald-500/25",
       title: isId ? "Video Wall & Paperless System" : "Video Wall & Paperless Systems",
       description: isId
         ? "Terlibat dalam instalasi Paperless Conference & Video Wall di UPN Surabaya, termasuk deployment langsung aplikasi SnapStream di Video Wall."
@@ -43,7 +40,6 @@ export default function AboutSection() {
     },
     {
       icon: LuLayers,
-      accentBg: "bg-amber-500/15 text-amber-400 border-amber-500/25",
       title: isId ? "Fullstack Web & Mobile" : "Fullstack Web & Mobile Delivery",
       description: isId
         ? "Menyelesaikan e-commerce (Labverse, Labtek), portal korporat (AGS), dan DairyTrack berbasis Laravel, Django, React & Flutter."
@@ -60,7 +56,7 @@ export default function AboutSection() {
     {
       icon: LuCode,
       label: isId ? "Cakupan Rekayasa" : "Engineering Scope",
-      value: isId ? "R&D, Fullstack Web, Desktop & AI" : "R&D, Fullstack Web, Desktop & AI",
+      value: "R&D, Fullstack Web, Desktop & AI",
     },
     {
       icon: LuMapPin,
@@ -75,37 +71,30 @@ export default function AboutSection() {
   ];
 
   return (
-    <section id="about" className="space-y-10">
+    <section id="about" className="space-y-8 sm:space-y-10 w-full min-w-0">
       {/* Section Header */}
       <div className="reveal text-center space-y-3">
         <p className="theme-cyan-text text-xs font-mono-code font-semibold tracking-widest uppercase">
           {isId ? "Profil & Nilai Tambah" : "About & Value Proposition"}
         </p>
-        <h2 className="text-3xl md:text-4xl font-extrabold theme-heading">
-          {isId ? (
-            <>
-              Mengapa Tim Anda Akan{" "}
-              <span className="gradient-text-cyan">Nyaman Bekerja</span> Bersama Saya
-            </>
-          ) : (
-            <>
-              How I Bring <span className="gradient-text-cyan">Immediate Value</span> to Your Team
-            </>
-          )}
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold theme-heading">
+          {isId
+            ? "Mengapa Tim Anda Akan Nyaman Bekerja Bersama Saya"
+            : "How I Bring Immediate Value to Your Team"}
         </h2>
         <div className="section-divider" />
       </div>
 
       {/* Bento Row 1: Story + Recruiter Fact Sheet */}
-      <div className="reveal grid lg:grid-cols-12 gap-5">
+      <div className="reveal grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
         {/* Left: Personal Narrative */}
-        <div className="lg:col-span-7 bento-card rounded-3xl p-7 sm:p-9 space-y-4 flex flex-col justify-center">
+        <div className="lg:col-span-7 min-w-0 bento-card rounded-3xl p-5 sm:p-9 space-y-4 flex flex-col justify-center">
           <div className="inline-flex items-center gap-2 text-xs font-semibold theme-cyan-text">
-            <span className="w-2 h-2 rounded-full bg-cyan-500" />
+            <span className="w-2 h-2 rounded-full bg-[var(--accent-cyan)]" />
             {isId ? "Tentang Christian Jhon" : "About Christian Jhon"}
           </div>
 
-          <h3 className="text-xl sm:text-2xl font-bold theme-heading leading-snug">
+          <h3 className="text-lg sm:text-2xl font-bold theme-heading leading-snug">
             {isId
               ? "Engineer yang fokus menyelesaikan masalah nyata dari arsitektur backend hingga kenyamanan pengguna akhir."
               : "An ownership-driven engineer focused on shipping complete, reliable products from database schema to user interface."}
@@ -125,7 +114,7 @@ export default function AboutSection() {
         </div>
 
         {/* Right: Quick Recruiter Fact Sheet */}
-        <div className="lg:col-span-5 bento-card rounded-3xl p-7 sm:p-8 flex flex-col justify-between space-y-5">
+        <div className="lg:col-span-5 min-w-0 bento-card rounded-3xl p-5 sm:p-8 flex flex-col justify-between space-y-5">
           <div>
             <p className="text-xs font-mono-code uppercase tracking-wider theme-cyan-text font-semibold">
               {isId ? "Ringkasan Cepat HRD" : "Recruiter Quick Snapshot"}
@@ -141,14 +130,14 @@ export default function AboutSection() {
               return (
                 <div
                   key={fact.label}
-                  className="p-3.5 rounded-2xl surface-subtle flex items-center gap-3.5"
+                  className="p-3.5 rounded-2xl surface-subtle flex items-start sm:items-center gap-3.5 min-w-0"
                 >
-                  <div className="w-9 h-9 rounded-xl bg-cyan-500/12 border border-cyan-500/20 flex items-center justify-center theme-cyan-text flex-shrink-0">
+                  <div className="w-9 h-9 rounded-xl accent-soft flex items-center justify-center flex-shrink-0">
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[11px] theme-muted font-medium">{fact.label}</p>
-                    <p className="text-xs sm:text-sm font-bold theme-heading truncate">
+                    <p className="text-[11px] theme-muted font-medium leading-snug">{fact.label}</p>
+                    <p className="text-xs sm:text-sm font-bold theme-heading leading-snug break-words mt-0.5">
                       {fact.value}
                     </p>
                   </div>
@@ -160,17 +149,15 @@ export default function AboutSection() {
       </div>
 
       {/* Bento Row 2: 4 Core Capability Pillars */}
-      <div className="reveal grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="reveal grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {pillars.map((item) => {
           const Icon = item.icon;
           return (
             <div
               key={item.title}
-              className="bento-card bento-card-interactive rounded-2xl p-6 space-y-3.5 flex flex-col"
+              className="bento-card bento-card-interactive rounded-2xl p-5 sm:p-6 space-y-3.5 flex flex-col min-w-0"
             >
-              <div
-                className={`w-11 h-11 rounded-xl border flex items-center justify-center ${item.accentBg}`}
-              >
+              <div className="w-11 h-11 rounded-xl accent-soft flex items-center justify-center">
                 <Icon className="w-5 h-5" />
               </div>
               <h3 className="font-bold theme-heading text-base leading-snug">{item.title}</h3>

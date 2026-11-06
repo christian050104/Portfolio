@@ -151,41 +151,29 @@ export default function LightboxModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-2 py-1">
-          <div className="min-w-0 flex items-center gap-2.5 flex-wrap">
-            <span className="text-white font-bold text-base md:text-lg truncate">
+        <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3 px-1 sm:px-2 py-1">
+          <div className="min-w-0 flex items-center gap-2 flex-wrap">
+            <span className="text-white font-bold text-sm sm:text-base md:text-lg truncate max-w-[180px] sm:max-w-none">
               {projectName}
             </span>
 
             {isDualPlatform && (
-              <span
-                className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
-                  currentPlatform === "mobile"
-                    ? "bg-violet-500/20 text-violet-300 border-violet-500/35"
-                    : "bg-emerald-500/20 text-emerald-300 border-emerald-500/35"
-                }`}
-              >
+              <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full border bg-white/10 text-slate-200 border-white/20">
                 {currentPlatform === "mobile" ? (
-                  <LuSmartphone className="w-3 h-3" />
+                  <LuSmartphone className="w-3 h-3 text-blue-300" />
                 ) : (
-                  <LuMonitor className="w-3 h-3" />
+                  <LuMonitor className="w-3 h-3 text-blue-300" />
                 )}
                 {currentPlatform === "mobile" ? "Mobile App" : "Website"}
               </span>
             )}
 
             {isDualPortal && (
-              <span
-                className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
-                  currentPortal === "admin"
-                    ? "bg-amber-500/20 text-amber-300 border-amber-500/35"
-                    : "bg-sky-500/20 text-sky-300 border-sky-500/35"
-                }`}
-              >
+              <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full border bg-white/10 text-slate-200 border-white/20">
                 {currentPortal === "admin" ? (
-                  <LuShieldCheck className="w-3 h-3" />
+                  <LuShieldCheck className="w-3 h-3 text-blue-300" />
                 ) : (
-                  <LuGlobe className="w-3 h-3" />
+                  <LuGlobe className="w-3 h-3 text-blue-300" />
                 )}
                 {currentPortal === "admin"
                   ? isId
@@ -197,20 +185,20 @@ export default function LightboxModal({
               </span>
             )}
 
-            <span className="text-cyan-400 text-xs font-mono-code px-2.5 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/30">
+            <span className="hidden sm:inline-block text-blue-300 text-xs font-mono-code px-2.5 py-0.5 rounded-full bg-blue-500/15 border border-blue-400/30 max-w-xs truncate">
               {caption}
             </span>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 ml-auto">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0 ml-auto">
             {/* Dual-Platform Filter Switcher inside Lightbox */}
             {isDualPlatform && (
-              <div className="flex items-center p-1 rounded-xl bg-white/10 border border-white/15 text-xs">
+              <div className="flex items-center p-1 rounded-xl bg-white/10 border border-white/15 text-[11px] sm:text-xs">
                 <button
                   onClick={() => handleSelectFilter("all")}
-                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
                     filterMode === "all"
-                      ? "bg-cyan-500 text-white"
+                      ? "bg-[var(--accent-cyan)] text-white"
                       : "text-slate-300 hover:text-white"
                   }`}
                 >
@@ -220,26 +208,26 @@ export default function LightboxModal({
                 </button>
                 <button
                   onClick={() => handleSelectFilter("web")}
-                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
                     filterMode === "web"
-                      ? "bg-cyan-500 text-white"
+                      ? "bg-[var(--accent-cyan)] text-white"
                       : "text-slate-300 hover:text-white"
                   }`}
                 >
                   <LuMonitor className="w-3 h-3" />
-                  <span>Web</span>
+                  <span className="hidden xs:inline sm:inline">Web</span>
                   <span className="font-mono-code text-[10px]">({webImages.length})</span>
                 </button>
                 <button
                   onClick={() => handleSelectFilter("mobile")}
-                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
                     filterMode === "mobile"
-                      ? "bg-cyan-500 text-white"
+                      ? "bg-[var(--accent-cyan)] text-white"
                       : "text-slate-300 hover:text-white"
                   }`}
                 >
                   <LuSmartphone className="w-3 h-3" />
-                  <span>Mobile</span>
+                  <span className="hidden xs:inline sm:inline">Mobile</span>
                   <span className="font-mono-code text-[10px]">({mobileImages.length})</span>
                 </button>
               </div>
@@ -247,12 +235,12 @@ export default function LightboxModal({
 
             {/* Dual-Portal Filter Switcher (Storefront / Public vs Admin Backoffice) */}
             {isDualPortal && (
-              <div className="flex items-center p-1 rounded-xl bg-white/10 border border-white/15 text-xs">
+              <div className="flex items-center p-1 rounded-xl bg-white/10 border border-white/15 text-[11px] sm:text-xs">
                 <button
                   onClick={() => handleSelectFilter("all")}
-                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
                     filterMode === "all"
-                      ? "bg-cyan-500 text-white"
+                      ? "bg-[var(--accent-cyan)] text-white"
                       : "text-slate-300 hover:text-white"
                   }`}
                 >
@@ -262,40 +250,40 @@ export default function LightboxModal({
                 </button>
                 <button
                   onClick={() => handleSelectFilter("storefront")}
-                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
                     filterMode === "storefront"
-                      ? "bg-cyan-500 text-white"
+                      ? "bg-[var(--accent-cyan)] text-white"
                       : "text-slate-300 hover:text-white"
                   }`}
                 >
                   <LuGlobe className="w-3 h-3" />
-                  <span>User</span>
+                  <span className="hidden sm:inline">User</span>
                   <span className="font-mono-code text-[10px]">({storefrontImages.length})</span>
                 </button>
                 <button
                   onClick={() => handleSelectFilter("admin")}
-                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
                     filterMode === "admin"
-                      ? "bg-cyan-500 text-white"
+                      ? "bg-[var(--accent-cyan)] text-white"
                       : "text-slate-300 hover:text-white"
                   }`}
                 >
                   <LuShieldCheck className="w-3 h-3" />
-                  <span>Admin</span>
+                  <span className="hidden sm:inline">Admin</span>
                   <span className="font-mono-code text-[10px]">({adminImages.length})</span>
                 </button>
               </div>
             )}
 
-            <span className="text-slate-300 text-xs sm:text-sm font-mono-code tabular-nums px-2.5 py-1 rounded-lg bg-white/10">
+            <span className="text-slate-300 text-[11px] sm:text-sm font-mono-code tabular-nums px-2 py-1 rounded-lg bg-white/10">
               {safeIdx + 1} / {total}
             </span>
             <button
               onClick={onClose}
               aria-label="Close gallery"
-              className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-white transition-colors cursor-pointer"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-white transition-colors cursor-pointer"
             >
-              <LuX className="w-5 h-5" />
+              <LuX className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>
@@ -337,14 +325,14 @@ export default function LightboxModal({
               <button
                 onClick={prev}
                 aria-label="Previous screenshot"
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-slate-900/80 hover:bg-cyan-600 border border-white/15 text-white flex items-center justify-center transition-all shadow-xl cursor-pointer z-10"
+                className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-slate-900/80 hover:bg-[var(--accent-cyan)] border border-white/15 text-white flex items-center justify-center transition-all shadow-xl cursor-pointer z-10"
               >
                 <LuChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={next}
                 aria-label="Next screenshot"
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-slate-900/80 hover:bg-cyan-600 border border-white/15 text-white flex items-center justify-center transition-all shadow-xl cursor-pointer z-10"
+                className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-slate-900/80 hover:bg-[var(--accent-cyan)] border border-white/15 text-white flex items-center justify-center transition-all shadow-xl cursor-pointer z-10"
               >
                 <LuChevronRight className="w-5 h-5" />
               </button>
@@ -369,7 +357,7 @@ export default function LightboxModal({
                     isMob ? "w-10 h-16 sm:w-11 sm:h-16" : "w-20 h-12 sm:w-24 sm:h-14"
                   } ${
                     i === safeIdx
-                      ? "border-cyan-400 opacity-100 scale-105 shadow-lg shadow-cyan-500/30"
+                      ? "border-blue-400 opacity-100 scale-105 shadow-lg shadow-blue-500/30"
                       : "border-white/10 opacity-45 hover:opacity-85 hover:border-white/30"
                   }`}
                 >

@@ -52,31 +52,31 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 no-print">
-      {/* Top Reading Progress Bar */}
+      {/* Clean Solid Reading Progress Bar */}
       <div className="h-[2px] w-full bg-transparent overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500 transition-[width] duration-150"
+          className="h-full bg-[var(--accent-cyan)] transition-[width] duration-150"
           style={{ width: `${scrollProgress}%` }}
         />
       </div>
 
-      <div className={`px-3 sm:px-6 transition-all duration-300 ${scrolled ? "pt-2.5" : "pt-4"}`}>
+      <div className={`px-3 sm:px-6 transition-all duration-300 ${scrolled ? "pt-2" : "pt-3 sm:pt-4"}`}>
         <div
           className={`mx-auto max-w-6xl rounded-2xl transition-all duration-300 ${
-            scrolled ? "surface-nav shadow-xl px-4 py-2.5" : "surface-nav px-4 py-3"
+            scrolled ? "surface-nav shadow-lg px-3.5 sm:px-4 py-2.5" : "surface-nav px-3.5 sm:px-4 py-2.5 sm:py-3"
           }`}
         >
-          <nav className="flex items-center justify-between gap-3">
+          <nav className="flex items-center justify-between gap-2 sm:gap-3">
             {/* Brand */}
-            <a href="#home" className="group flex items-center gap-2.5 flex-shrink-0">
-              <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 via-indigo-500 to-violet-600 flex items-center justify-center text-white font-extrabold text-sm shadow-md shadow-cyan-500/25 group-hover:scale-105 transition-transform">
+            <a href="#home" className="group flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[var(--text-heading)] text-[var(--bg-primary)] flex items-center justify-center font-extrabold text-xs sm:text-sm tracking-tight flex-shrink-0 group-hover:opacity-90 transition-opacity">
                 CJ
               </div>
-              <div className="hidden sm:flex flex-col leading-none">
-                <span className="font-display font-bold text-sm theme-heading">
-                  Christian<span className="theme-cyan-text">.dev</span>
+              <div className="flex flex-col leading-none min-w-0">
+                <span className="font-display font-bold text-xs sm:text-sm theme-heading truncate">
+                  Christian Jhon
                 </span>
-                <span className="text-[10px] theme-muted font-medium mt-0.5">
+                <span className="text-[10px] theme-muted font-medium mt-0.5 hidden xs:inline sm:inline">
                   IT Engineer · R&D
                 </span>
               </div>
@@ -92,7 +92,7 @@ export default function Navbar() {
                     href={`#${item.id}`}
                     className={`relative px-3 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 ${
                       isActive
-                        ? "theme-cyan-text bg-cyan-500/10 border border-cyan-500/25"
+                        ? "theme-heading surface-subtle font-bold"
                         : "theme-muted hover:theme-heading"
                     }`}
                   >
@@ -103,10 +103,10 @@ export default function Navbar() {
             </div>
 
             {/* Right Controls: Language, Theme, CV, Hire CTA */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
               {/* Bilingual Segmented Pill */}
               <div
-                className="flex items-center p-0.5 rounded-xl surface-pill text-[11px] font-bold"
+                className="flex items-center p-0.5 rounded-xl surface-pill text-[11px] font-semibold"
                 role="group"
                 aria-label="Language switcher"
               >
@@ -114,7 +114,7 @@ export default function Navbar() {
                   onClick={() => setLocale("id")}
                   className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
                     locale === "id"
-                      ? "bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-sm"
+                      ? "bg-[var(--accent-cyan)] text-white"
                       : "theme-muted hover:theme-heading"
                   }`}
                 >
@@ -124,7 +124,7 @@ export default function Navbar() {
                   onClick={() => setLocale("en")}
                   className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
                     locale === "en"
-                      ? "bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-sm"
+                      ? "bg-[var(--accent-cyan)] text-white"
                       : "theme-muted hover:theme-heading"
                   }`}
                 >
@@ -145,12 +145,12 @@ export default function Navbar() {
                     ? "Mode Gelap"
                     : "Dark Mode"
                 }
-                className="w-8 h-8 rounded-xl surface-pill flex items-center justify-center theme-body hover:theme-cyan-text transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-xl surface-pill flex items-center justify-center theme-body hover:theme-heading transition-colors cursor-pointer"
               >
                 {theme === "dark" ? (
                   <LuSun className="w-4 h-4 text-amber-400" />
                 ) : (
-                  <LuMoon className="w-4 h-4 text-indigo-600" />
+                  <LuMoon className="w-4 h-4 text-slate-700" />
                 )}
               </button>
 
@@ -168,7 +168,7 @@ export default function Navbar() {
                 href="#contact"
                 className="hidden md:inline-flex items-center gap-1 px-3.5 py-1.5 text-xs font-semibold rounded-xl btn-primary"
               >
-                <span>{isId ? "Hubungi Saya" : "Hire Me"}</span>
+                <span>{isId ? "Hubungi Saya" : "Contact"}</span>
                 <LuArrowUpRight className="w-3.5 h-3.5" />
               </a>
 
@@ -199,7 +199,7 @@ export default function Navbar() {
                     onClick={() => setOpen(false)}
                     className={`px-3.5 py-2.5 text-xs font-semibold rounded-xl transition-colors ${
                       isActive
-                        ? "bg-cyan-500/15 theme-cyan-text border border-cyan-500/30"
+                        ? "bg-[var(--accent-cyan)] text-white"
                         : "surface-subtle theme-body"
                     }`}
                   >
@@ -218,14 +218,14 @@ export default function Navbar() {
                 className="flex-1 py-2.5 text-xs font-semibold rounded-xl btn-secondary flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <LuFileText className="w-4 h-4 theme-cyan-text" />
-                {isId ? "Lihat / Unduh CV" : "View / Download CV"}
+                {isId ? "Lihat CV" : "View CV"}
               </button>
               <a
                 href="#contact"
                 onClick={() => setOpen(false)}
                 className="flex-1 py-2.5 text-xs font-semibold rounded-xl btn-primary flex items-center justify-center gap-1"
               >
-                {isId ? "Hubungi Saya" : "Hire Me"}
+                {isId ? "Hubungi Saya" : "Contact"}
                 <LuArrowUpRight className="w-4 h-4" />
               </a>
             </div>

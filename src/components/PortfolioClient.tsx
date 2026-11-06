@@ -21,10 +21,10 @@ export default function PortfolioClient({ projects }: { projects: ProjectItem[] 
       <Navbar />
       <div className="fixed inset-0 -z-20 bg-mesh transition-colors duration-300" />
 
-      <main>
+      <main className="w-full max-w-[100vw] overflow-x-clip">
         <HeroSection />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-24 md:space-y-28 py-12 md:py-16">
+          <div className="space-y-20 sm:space-y-24 md:space-y-28 py-10 md:py-16">
             <AboutSection />
             <SkillsSection />
             <FeaturedSection projectsData={projects} />

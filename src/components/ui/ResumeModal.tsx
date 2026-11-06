@@ -119,7 +119,7 @@ export default function ResumeModal() {
           >
             {/* Fallback for mobile browsers that block inline PDF embeds */}
             <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+              <div className="w-14 h-14 rounded-2xl bg-blue-500/15 border border-blue-400/30 flex items-center justify-center text-blue-400">
                 <LuFileText className="w-7 h-7" />
               </div>
               <div className="space-y-1 max-w-sm">

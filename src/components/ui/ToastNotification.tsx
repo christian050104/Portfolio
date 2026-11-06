@@ -9,12 +9,12 @@ export default function ToastNotification() {
   if (!toastMessage) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-[10050] pointer-events-none no-print">
-      <div className="animate-toast-in pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl surface-modal shadow-2xl">
-        <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-500 flex-shrink-0">
+    <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:bottom-6 sm:right-6 z-[10050] flex justify-center sm:justify-end pointer-events-none no-print">
+      <div className="animate-toast-in pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl surface-modal shadow-2xl max-w-full">
+        <div className="w-8 h-8 rounded-xl accent-soft flex items-center justify-center flex-shrink-0">
           <LuCircleCheck className="w-4 h-4" />
         </div>
-        <p className="text-sm font-medium theme-heading">{toastMessage}</p>
+        <p className="text-xs sm:text-sm font-medium theme-heading break-words">{toastMessage}</p>
       </div>
     </div>
   );

@@ -30,21 +30,21 @@ const FILTERS = ["All", "AI & ML", "Desktop", "Web & Mobile", "Fullstack Web"] a
 type FilterValue = (typeof FILTERS)[number];
 
 const ACCENT_GRADIENTS: Record<ProjectItem["accent"], string> = {
-  violet: "from-violet-600/25 via-indigo-600/15 to-transparent",
-  cyan: "from-cyan-600/25 via-sky-600/15 to-transparent",
-  emerald: "from-emerald-600/25 via-teal-600/15 to-transparent",
-  blue: "from-blue-600/25 via-indigo-600/15 to-transparent",
-  amber: "from-amber-500/25 via-orange-600/15 to-transparent",
-  rose: "from-rose-500/25 via-pink-600/15 to-transparent",
+  violet: "from-slate-900/90 via-slate-900/50 to-transparent",
+  cyan: "from-blue-950/60 via-slate-900/40 to-transparent",
+  emerald: "from-slate-900/90 via-slate-900/50 to-transparent",
+  blue: "from-blue-950/60 via-slate-900/40 to-transparent",
+  amber: "from-slate-900/90 via-slate-900/50 to-transparent",
+  rose: "from-slate-900/90 via-slate-900/50 to-transparent",
 };
 
 const PORTAL_STUDIO_BG: Record<ProjectItem["accent"], string> = {
-  violet: "from-slate-950 via-violet-950/55 to-slate-900",
-  cyan: "from-slate-950 via-cyan-950/55 to-slate-900",
-  emerald: "from-slate-950 via-emerald-950/55 to-slate-900",
-  blue: "from-slate-950 via-blue-950/60 to-slate-900",
-  amber: "from-slate-950 via-amber-950/45 to-slate-900",
-  rose: "from-slate-950 via-rose-950/50 to-slate-900",
+  violet: "from-slate-950 via-slate-900 to-slate-950",
+  cyan: "from-slate-950 via-slate-900 to-slate-950",
+  emerald: "from-slate-950 via-slate-900 to-slate-950",
+  blue: "from-slate-950 via-slate-900 to-slate-950",
+  amber: "from-slate-950 via-slate-900 to-slate-950",
+  rose: "from-slate-950 via-slate-900 to-slate-950",
 };
 
 function ArchitectureBlueprint({
@@ -79,7 +79,7 @@ function ArchitectureBlueprint({
             {project.id}.architecture
           </span>
         </div>
-        <span className="text-[10px] font-mono-code px-2 py-0.5 rounded-md bg-white/10 text-cyan-300 border border-white/10">
+        <span className="text-[10px] font-mono-code px-2 py-0.5 rounded-md bg-white/10 text-blue-300 border border-white/10">
           {project.tech[0]}
         </span>
       </div>
@@ -88,9 +88,9 @@ function ArchitectureBlueprint({
         {modules.slice(0, 4).map((mod, idx) => (
           <div
             key={mod}
-            className="px-2.5 py-2 rounded-xl bg-slate-900/85 border border-white/10 flex items-center gap-2"
+            className="px-2.5 py-2 rounded-xl bg-slate-900/85 border border-white/10 flex items-center gap-2 min-w-0"
           >
-            <span className="w-4 h-4 rounded-md bg-cyan-500/20 text-cyan-300 text-[10px] font-mono-code font-bold flex items-center justify-center flex-shrink-0">
+            <span className="w-4 h-4 rounded-md bg-blue-500/20 text-blue-300 text-[10px] font-mono-code font-bold flex items-center justify-center flex-shrink-0">
               0{idx + 1}
             </span>
             <span className="text-[11px] font-medium text-slate-200 truncate">
@@ -102,7 +102,7 @@ function ArchitectureBlueprint({
 
       <div className="relative z-10 flex items-center justify-between text-[10px] text-slate-400">
         <span className="inline-flex items-center gap-1">
-          <LuLayers className="w-3 h-3 text-cyan-400" />
+          <LuLayers className="w-3 h-3 text-blue-400" />
           {locale === "id" ? "Arsitektur Modul" : "System Modules"}
         </span>
         <div className="flex items-center gap-1.5">
@@ -132,7 +132,7 @@ function DualPlatformCardCover({
   isId: boolean;
 }) {
   return (
-    <div className="relative w-full aspect-video bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 overflow-hidden p-3 flex items-center">
+    <div className="relative w-full aspect-video bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 overflow-hidden p-3 flex items-center">
       {/* Website Screen (Left / Main Frame) */}
       <div className="relative w-[76%] h-[88%] rounded-xl overflow-hidden border border-white/15 shadow-xl bg-slate-900 group-hover:scale-[1.02] transition-transform duration-500">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -158,12 +158,12 @@ function DualPlatformCardCover({
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-transparent to-transparent pointer-events-none" />
 
       {/* Dual Count Pill */}
-      <div className="absolute bottom-2.5 left-3 px-2.5 py-1 rounded-lg bg-slate-950/85 backdrop-blur-md border border-white/15 text-[10px] font-mono-code text-white flex items-center gap-2 z-20">
-        <span className="inline-flex items-center gap-1 text-cyan-300">
+      <div className="absolute bottom-2.5 left-3 px-2.5 py-1 rounded-lg bg-slate-950/85 backdrop-blur-md border border-white/15 text-[10px] font-mono-code text-slate-200 flex items-center gap-2 z-20">
+        <span className="inline-flex items-center gap-1 text-blue-300">
           <LuMonitor className="w-3 h-3" /> {webCount} Web
         </span>
         <span className="text-slate-500">·</span>
-        <span className="inline-flex items-center gap-1 text-violet-300">
+        <span className="inline-flex items-center gap-1 text-slate-200">
           <LuSmartphone className="w-3 h-3" /> {mobileCount} {isId ? "Mobile" : "App"}
         </span>
       </div>
@@ -203,7 +203,7 @@ function DualPortalCardCover({
         }}
       />
 
-      {/* Primary Browser Window: Customer / Public Storefront (Top-Left, 21:10 ratio so 0% side crop!) */}
+      {/* Primary Browser Window: Customer / Public Storefront */}
       <div className="relative z-10 w-[80%] mt-5 rounded-xl overflow-hidden border border-white/20 bg-slate-900 shadow-xl group-hover:scale-[1.015] transition-transform duration-500">
         <div className="h-4 px-2 bg-slate-900 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-1">
@@ -211,7 +211,7 @@ function DualPortalCardCover({
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400/85" />
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/85" />
           </div>
-          <span className="text-[8px] font-mono-code text-sky-300/90 tracking-tight">
+          <span className="text-[8px] font-mono-code text-slate-300 tracking-tight">
             portal.user
           </span>
         </div>
@@ -226,15 +226,15 @@ function DualPortalCardCover({
         </div>
       </div>
 
-      {/* Secondary Elevated Browser Window: Admin Backoffice (Bottom-Right Foreground Overlap) */}
-      <div className="absolute right-2.5 bottom-2.5 w-[58%] rounded-xl overflow-hidden border border-cyan-400/35 bg-slate-900 shadow-[0_14px_32px_rgba(0,0,0,0.88)] group-hover:-translate-y-1 group-hover:scale-[1.03] transition-all duration-500 z-20">
+      {/* Secondary Elevated Browser Window: Admin Backoffice */}
+      <div className="absolute right-2.5 bottom-2.5 w-[58%] rounded-xl overflow-hidden border border-white/25 bg-slate-900 shadow-[0_14px_32px_rgba(0,0,0,0.88)] group-hover:-translate-y-1 group-hover:scale-[1.03] transition-all duration-500 z-20">
         <div className="h-3.5 px-2 bg-slate-950 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-400/80" />
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400/80" />
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
           </div>
-          <span className="text-[8px] font-mono-code text-amber-300 tracking-tight">
+          <span className="text-[8px] font-mono-code text-blue-300 tracking-tight">
             admin.backoffice
           </span>
         </div>
@@ -252,12 +252,12 @@ function DualPortalCardCover({
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none z-15" />
 
       {/* Dual Portal Count Pill */}
-      <div className="absolute bottom-2.5 left-3 px-2.5 py-1 rounded-lg bg-slate-950/90 backdrop-blur-md border border-white/15 text-[10px] font-mono-code text-white flex items-center gap-1.5 z-30 shadow-lg">
-        <span className="inline-flex items-center gap-1 text-sky-300">
+      <div className="absolute bottom-2.5 left-3 px-2.5 py-1 rounded-lg bg-slate-950/90 backdrop-blur-md border border-white/15 text-[10px] font-mono-code text-slate-200 flex items-center gap-1.5 z-30 shadow-lg">
+        <span className="inline-flex items-center gap-1 text-blue-300">
           <LuGlobe className="w-3 h-3" /> {storefrontCount} User
         </span>
         <span className="text-slate-500">·</span>
-        <span className="inline-flex items-center gap-1 text-amber-300">
+        <span className="inline-flex items-center gap-1 text-slate-200">
           <LuShieldCheck className="w-3 h-3" /> {adminCount} Admin
         </span>
       </div>
@@ -320,25 +320,25 @@ function ProjectDetailModal({
       <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-lg" />
 
       <div
-        className="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl surface-modal shadow-2xl p-6 sm:p-8 space-y-6"
+        className="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden rounded-3xl surface-modal shadow-2xl p-4 sm:p-8 space-y-5 sm:space-y-6"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-1.5">
+        <div className="flex items-start justify-between gap-3 sm:gap-4 min-w-0">
+          <div className="space-y-1.5 min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/12 theme-cyan-text border border-cyan-500/25">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold accent-soft">
                 {project.category}
               </span>
               <span className="text-xs font-mono-code theme-muted">{project.year}</span>
-              <span className="text-xs font-semibold theme-emerald-text">
+              <span className="text-xs font-medium theme-muted break-words">
                 • {project.impactBadge[locale]}
               </span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-extrabold theme-heading">
+            <h3 className="text-xl sm:text-3xl font-extrabold theme-heading break-words">
               {project.name}
             </h3>
-            <p className="text-xs sm:text-sm font-semibold theme-cyan-text">
+            <p className="text-xs sm:text-sm font-medium theme-cyan-text">
               {project.role[locale]}
             </p>
           </div>
@@ -354,10 +354,10 @@ function ProjectDetailModal({
 
         {/* Visual Preview (Dual-Platform & Dual-Portal Aware!) */}
         {project.images.length > 0 ? (
-          <div className="space-y-3">
+          <div className="space-y-3 min-w-0">
             {/* Switcher 1: Website vs Flutter Mobile */}
             {isDualPlatform && (
-              <div className="flex items-center gap-2 p-1.5 rounded-2xl surface-subtle">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5 p-1.5 rounded-2xl surface-subtle">
                 <button
                   onClick={() => {
                     setDetailPlatformTab("web");
@@ -369,7 +369,7 @@ function ProjectDetailModal({
                       : "theme-muted hover:theme-heading"
                   }`}
                 >
-                  <LuMonitor className="w-4 h-4" />
+                  <LuMonitor className="w-4 h-4 flex-shrink-0" />
                   <span>{isId ? `Versi Website (${webImages.length})` : `Website (${webImages.length})`}</span>
                 </button>
                 <button
@@ -383,7 +383,7 @@ function ProjectDetailModal({
                       : "theme-muted hover:theme-heading"
                   }`}
                 >
-                  <LuSmartphone className="w-4 h-4" />
+                  <LuSmartphone className="w-4 h-4 flex-shrink-0" />
                   <span>
                     {isId ? `Versi Mobile Flutter (${mobileImages.length})` : `Flutter Mobile (${mobileImages.length})`}
                   </span>
@@ -393,7 +393,7 @@ function ProjectDetailModal({
 
             {/* Switcher 2: Customer/Public Portal vs Admin Backoffice */}
             {isDualPortal && (
-              <div className="flex items-center gap-2 p-1.5 rounded-2xl surface-subtle">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5 p-1.5 rounded-2xl surface-subtle">
                 <button
                   onClick={() => {
                     setDetailPortalTab("storefront");
@@ -405,7 +405,7 @@ function ProjectDetailModal({
                       : "theme-muted hover:theme-heading"
                   }`}
                 >
-                  <LuGlobe className="w-4 h-4" />
+                  <LuGlobe className="w-4 h-4 flex-shrink-0" />
                   <span>
                     {isId
                       ? `Portal Pelanggan / Publik (${storefrontImages.length})`
@@ -423,7 +423,7 @@ function ProjectDetailModal({
                       : "theme-muted hover:theme-heading"
                   }`}
                 >
-                  <LuShieldCheck className="w-4 h-4" />
+                  <LuShieldCheck className="w-4 h-4 flex-shrink-0" />
                   <span>
                     {isId
                       ? `Panel Admin & Backoffice (${adminImages.length})`
@@ -434,20 +434,20 @@ function ProjectDetailModal({
             )}
 
             {isDualPlatform && detailPlatformTab === "mobile" ? (
-              <div className="space-y-3">
+              <div className="space-y-3 min-w-0">
                 {/* 3-Up Portrait Mobile Showcase Stage */}
-                <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl border border-[var(--border-strong)] bg-gradient-to-br from-slate-950 via-indigo-950/40 to-slate-900">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3 p-2.5 sm:p-4 rounded-2xl border border-[var(--border-strong)] bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
                   {mobileImages.slice(0, 3).map((src, i) => (
                     <button
                       key={src}
                       onClick={() => onOpenLightbox(i, "mobile")}
-                      className="group relative h-52 sm:h-64 flex flex-col items-center justify-center gap-2 cursor-zoom-in"
+                      className="group relative h-40 sm:h-64 flex flex-col items-center justify-center gap-1.5 sm:gap-2 cursor-zoom-in min-w-0"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={encodeAssetPath(src)}
                         alt={formatScreenshotCaption(src)}
-                        className="h-44 sm:h-56 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xl"
+                        className="h-32 sm:h-56 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xl"
                       />
                       <span className="text-[10px] font-medium text-slate-300 truncate max-w-full px-1">
                         {formatScreenshotCaption(src)}
@@ -457,12 +457,12 @@ function ProjectDetailModal({
                 </div>
 
                 {mobileImages.length > 3 && (
-                  <div className="flex items-center gap-2 overflow-x-auto pb-1 hide-scrollbar">
+                  <div className="flex items-center gap-2 w-full overflow-x-auto pb-1 hide-scrollbar">
                     {mobileImages.map((img, i) => (
                       <button
                         key={img}
                         onClick={() => onOpenLightbox(i, "mobile")}
-                        className="flex-shrink-0 px-3 py-1.5 rounded-xl surface-pill hover:border-cyan-400 text-xs font-medium theme-body hover:theme-cyan-text transition-all cursor-pointer"
+                        className="flex-shrink-0 px-3 py-1.5 rounded-xl surface-pill hover:border-[var(--border-accent)] text-xs font-medium theme-body hover:theme-cyan-text transition-all cursor-pointer"
                       >
                         {formatScreenshotCaption(img)}
                       </button>
@@ -471,7 +471,7 @@ function ProjectDetailModal({
                 )}
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-3 min-w-0">
                 {(() => {
                   const list = isDualPlatform
                     ? webImages
@@ -490,18 +490,18 @@ function ProjectDetailModal({
 
                   return (
                     <>
-                      {/* Browser-Framed Interactive Stage (21/10 for wide Dual-Portal web captures so 0% is cropped!) */}
+                      {/* Browser-Framed Interactive Stage */}
                       <div className="rounded-2xl overflow-hidden border border-[var(--border-strong)] bg-slate-950 shadow-xl">
-                        <div className="px-3.5 py-2 bg-slate-900 border-b border-white/10 flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-2.5 h-2.5 rounded-full bg-rose-400/80" />
-                            <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
-                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
-                            <span className="ml-2 text-xs font-mono-code text-cyan-300 truncate max-w-[220px] sm:max-w-xs">
+                        <div className="px-3 py-2 bg-slate-900 border-b border-white/10 flex items-center justify-between gap-2 min-w-0">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="w-2.5 h-2.5 rounded-full bg-rose-400/80 flex-shrink-0" />
+                            <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80 flex-shrink-0" />
+                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80 flex-shrink-0" />
+                            <span className="ml-1.5 text-xs font-mono-code text-slate-200 truncate">
                               {formatScreenshotCaption(activePreviewSrc)}
                             </span>
                           </div>
-                          <span className="text-[11px] font-mono-code text-slate-400">
+                          <span className="text-[11px] font-mono-code text-slate-400 flex-shrink-0">
                             {safePreviewIdx + 1} / {list.length}
                           </span>
                         </div>
@@ -518,12 +518,12 @@ function ProjectDetailModal({
                             alt={`${project.name} — ${formatScreenshotCaption(activePreviewSrc)}`}
                             className="w-full h-full object-cover object-top group-hover:scale-[1.015] transition-transform duration-300"
                           />
-                          <div className="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md text-white text-xs font-semibold flex items-center gap-1.5 border border-white/15 shadow-lg">
-                            <LuMaximize2 className="w-3.5 h-3.5 text-cyan-400" />
+                          <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md text-white text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 border border-white/15 shadow-lg">
+                            <LuMaximize2 className="w-3.5 h-3.5 text-blue-400" />
                             <span>
                               {isId
-                                ? `Perbesar (${list.length} Layar)`
-                                : `Fullscreen (${list.length} Screens)`}
+                                ? `Perbesar (${list.length})`
+                                : `Fullscreen (${list.length})`}
                             </span>
                           </div>
                         </div>
@@ -531,7 +531,7 @@ function ProjectDetailModal({
 
                       {/* Interactive Module Selector Strip */}
                       {list.length > 1 && (
-                        <div className="flex items-center gap-2 overflow-x-auto pb-1.5 hide-scrollbar">
+                        <div className="flex items-center gap-2 w-full overflow-x-auto pb-1.5 hide-scrollbar">
                           {list.map((img, i) => {
                             const selected = i === safePreviewIdx;
                             return (
@@ -541,11 +541,11 @@ function ProjectDetailModal({
                                 title={formatScreenshotCaption(img)}
                                 className={`flex-shrink-0 flex items-center gap-2 p-1.5 pr-3 rounded-xl border transition-all cursor-pointer ${
                                   selected
-                                    ? "border-cyan-400 bg-cyan-500/12 shadow-sm"
-                                    : "surface-subtle hover:border-cyan-500/40 opacity-80 hover:opacity-100"
+                                    ? "accent-soft shadow-sm"
+                                    : "surface-subtle hover:border-[var(--border-accent)] opacity-85 hover:opacity-100"
                                 }`}
                               >
-                                <div className="w-12 h-8 rounded-lg overflow-hidden bg-slate-900 border border-white/10 flex-shrink-0">
+                                <div className="w-11 h-7 sm:w-12 sm:h-8 rounded-lg overflow-hidden bg-slate-900 border border-white/10 flex-shrink-0">
                                   {/* eslint-disable-next-line @next/next/no-img-element */}
                                   <img
                                     src={encodeAssetPath(img)}
@@ -579,26 +579,26 @@ function ProjectDetailModal({
         )}
 
         {/* Full Description */}
-        <p className="text-sm sm:text-base theme-body leading-relaxed">
+        <p className="text-sm sm:text-base theme-body leading-relaxed break-words">
           {project.description[locale]}
         </p>
 
         {/* Challenge & Solution Executive Summary (when available) */}
         {project.challenge && project.solution && (
-          <div className="grid sm:grid-cols-2 gap-3">
-            <div className="p-4 rounded-2xl surface-subtle space-y-1.5">
-              <p className="text-[11px] font-mono-code font-bold uppercase tracking-wider text-amber-500">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="p-4 rounded-2xl surface-subtle border-l-2 border-l-slate-400 space-y-1.5 min-w-0">
+              <p className="text-[11px] font-mono-code font-bold uppercase tracking-wider theme-muted">
                 {isId ? "Tantangan Bisnis" : "Problem & Context"}
               </p>
-              <p className="text-xs sm:text-sm theme-body leading-relaxed">
+              <p className="text-xs sm:text-sm theme-body leading-relaxed break-words">
                 {project.challenge[locale]}
               </p>
             </div>
-            <div className="p-4 rounded-2xl surface-subtle space-y-1.5">
-              <p className="text-[11px] font-mono-code font-bold uppercase tracking-wider theme-emerald-text">
+            <div className="p-4 rounded-2xl surface-subtle border-l-2 border-l-[var(--accent-cyan)] space-y-1.5 min-w-0">
+              <p className="text-[11px] font-mono-code font-bold uppercase tracking-wider theme-cyan-text">
                 {isId ? "Solusi Arsitektur" : "Engineered Solution"}
               </p>
-              <p className="text-xs sm:text-sm theme-body leading-relaxed">
+              <p className="text-xs sm:text-sm theme-body leading-relaxed break-words">
                 {project.solution[locale]}
               </p>
             </div>
@@ -607,15 +607,15 @@ function ProjectDetailModal({
 
         {/* Highlights */}
         {project.highlights[locale].length > 0 && (
-          <div className="space-y-2.5">
+          <div className="space-y-2.5 min-w-0">
             <h4 className="text-xs font-bold uppercase tracking-wider theme-muted">
               {isId ? "Sorotan Teknis & Fitur" : "Technical Highlights"}
             </h4>
             <ul className="space-y-2">
               {project.highlights[locale].map((h) => (
-                <li key={h} className="flex items-start gap-2.5 text-sm theme-body">
-                  <LuCircleCheck className="w-4 h-4 theme-emerald-text flex-shrink-0 mt-0.5" />
-                  <span>{h}</span>
+                <li key={h} className="flex items-start gap-2.5 text-xs sm:text-sm theme-body">
+                  <LuCircleCheck className="w-4 h-4 theme-cyan-text flex-shrink-0 mt-0.5" />
+                  <span className="break-words">{h}</span>
                 </li>
               ))}
             </ul>
@@ -623,7 +623,7 @@ function ProjectDetailModal({
         )}
 
         {/* Tech Stack */}
-        <div className="space-y-2">
+        <div className="space-y-2 min-w-0">
           <h4 className="text-xs font-bold uppercase tracking-wider theme-muted">
             Tech Stack
           </h4>
@@ -633,15 +633,15 @@ function ProjectDetailModal({
                 key={t}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl surface-subtle text-xs font-semibold theme-heading"
               >
-                <TechIcon name={t} className="w-3.5 h-3.5" />
-                {t}
+                <TechIcon name={t} className="w-3.5 h-3.5 flex-shrink-0" />
+                <span>{t}</span>
               </span>
             ))}
           </div>
         </div>
 
         {/* Footer Actions */}
-        <div className="flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-[var(--border-subtle)]">
+        <div className="flex flex-col-reverse sm:flex-row flex-wrap items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-4 border-t border-[var(--border-subtle)]">
           {project.images.length > 0 && (
             <button
               onClick={() =>
@@ -654,9 +654,9 @@ function ProjectDetailModal({
                     : "all"
                 )
               }
-              className="btn-secondary px-4 py-2.5 text-xs sm:text-sm inline-flex items-center gap-2 cursor-pointer"
+              className="btn-secondary px-4 py-2.5 text-xs sm:text-sm inline-flex items-center justify-center gap-2 cursor-pointer"
             >
-              <LuMaximize2 className="w-4 h-4 theme-cyan-text" />
+              <LuMaximize2 className="w-4 h-4 theme-cyan-text flex-shrink-0" />
               <span>{isId ? "Galeri Layar Penuh" : "Fullscreen Gallery"}</span>
             </button>
           )}
@@ -664,11 +664,11 @@ function ProjectDetailModal({
             href={project.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-primary px-5 py-2.5 text-xs sm:text-sm inline-flex items-center gap-2"
+            className="btn-primary px-5 py-2.5 text-xs sm:text-sm inline-flex items-center justify-center gap-2"
           >
-            <FaGithub className="w-4 h-4" />
+            <FaGithub className="w-4 h-4 flex-shrink-0" />
             <span>{isId ? "Lihat Kode di GitHub" : "View on GitHub"}</span>
-            <LuExternalLink className="w-3.5 h-3.5" />
+            <LuExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
           </a>
         </div>
       </div>
@@ -709,23 +709,16 @@ export default function ProjectsSection({
       : projectsData.filter((p) => p.category === f).length;
 
   return (
-    <section id="projects" className="space-y-10">
+    <section id="projects" className="space-y-8 sm:space-y-10 w-full min-w-0">
       {/* Header */}
       <div className="reveal text-center space-y-3">
         <p className="theme-cyan-text text-xs font-mono-code font-semibold tracking-widest uppercase">
           {isId ? "Katalog Portofolio" : "Project Archive"}
         </p>
-        <h2 className="text-3xl md:text-4xl font-extrabold theme-heading">
-          {isId ? (
-            <>
-              Eksplorasi Seluruh{" "}
-              <span className="gradient-text-cyan">Karya & Sistem</span> Saya
-            </>
-          ) : (
-            <>
-              Complete <span className="gradient-text-cyan">Engineering Portfolio</span>
-            </>
-          )}
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold theme-heading">
+          {isId
+            ? "Eksplorasi Seluruh Karya & Sistem Saya"
+            : "Complete Engineering Portfolio"}
         </h2>
         <p className="theme-muted text-sm max-w-xl mx-auto">
           {isId
@@ -743,7 +736,7 @@ export default function ProjectsSection({
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+              className={`inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                 active
                   ? "btn-primary"
                   : "surface-pill theme-muted hover:theme-heading"
@@ -763,7 +756,7 @@ export default function ProjectsSection({
       </div>
 
       {/* Responsive Bento Project Grid */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
         {filteredProjects.map((proj) => {
           const hasImages = proj.images.length > 0;
           const webImgs = proj.images.filter((s) => getScreenshotPlatform(s) === "web");
@@ -785,7 +778,7 @@ export default function ProjectsSection({
           return (
             <article
               key={proj.id}
-              className="bento-card bento-card-interactive rounded-3xl overflow-hidden flex flex-col justify-between group"
+              className="bento-card bento-card-interactive rounded-3xl overflow-hidden flex flex-col justify-between group min-w-0"
             >
               <div>
                 {/* Visual Top */}
@@ -827,7 +820,7 @@ export default function ProjectsSection({
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
 
                       <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md border border-white/15 text-[11px] font-mono-code text-white flex items-center gap-1.5">
-                        <LuMaximize2 className="w-3 h-3 text-cyan-400" />
+                        <LuMaximize2 className="w-3 h-3 text-blue-400" />
                         <span>
                           {proj.images.length} {isId ? "Layar" : "Screens"}
                         </span>
@@ -843,7 +836,7 @@ export default function ProjectsSection({
                       {proj.category}
                     </span>
                     {proj.featured && (
-                      <span className="px-2 py-1 rounded-lg bg-cyan-500/90 text-[10px] font-extrabold text-white uppercase tracking-wider shadow-md">
+                      <span className="px-2 py-1 rounded-lg bg-[var(--accent-cyan)] text-[10px] font-extrabold text-white uppercase tracking-wider shadow-md">
                         Flagship
                       </span>
                     )}
@@ -851,9 +844,9 @@ export default function ProjectsSection({
                 </div>
 
                 {/* Card Body */}
-                <div className="p-5 sm:p-6 space-y-3">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <h3 className="text-lg font-extrabold theme-heading leading-snug group-hover:theme-cyan-text transition-colors">
+                <div className="p-5 sm:p-6 space-y-2.5 sm:space-y-3 min-w-0">
+                  <div className="flex items-baseline justify-between gap-2 min-w-0">
+                    <h3 className="text-lg font-extrabold theme-heading leading-snug group-hover:theme-cyan-text transition-colors break-words">
                       {proj.name}
                     </h3>
                     <span className="text-[11px] font-mono-code theme-faint flex-shrink-0">
@@ -861,7 +854,7 @@ export default function ProjectsSection({
                     </span>
                   </div>
 
-                  <p className="text-xs font-semibold theme-cyan-text">
+                  <p className="text-xs font-medium theme-cyan-text leading-snug break-words">
                     {proj.impactBadge[locale]}
                   </p>
 
@@ -872,15 +865,15 @@ export default function ProjectsSection({
               </div>
 
               {/* Card Footer: Tech + Actions */}
-              <div className="px-5 sm:px-6 pb-5 sm:pb-6 space-y-4">
+              <div className="px-5 sm:px-6 pb-5 sm:pb-6 space-y-4 min-w-0">
                 <div className="flex flex-wrap gap-1.5">
                   {proj.tech.slice(0, 4).map((t) => (
                     <span
                       key={t}
                       className="inline-flex items-center gap-1 px-2 py-1 rounded-lg surface-subtle text-[11px] font-medium theme-body"
                     >
-                      <TechIcon name={t} className="w-3 h-3" />
-                      {t}
+                      <TechIcon name={t} className="w-3 h-3 flex-shrink-0" />
+                      <span>{t}</span>
                     </span>
                   ))}
                   {proj.tech.length > 4 && (
@@ -895,7 +888,7 @@ export default function ProjectsSection({
                     onClick={() => setSelectedProject(proj)}
                     className="flex-1 py-2 px-3 rounded-xl btn-secondary text-xs font-semibold inline-flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    <LuEye className="w-3.5 h-3.5 theme-cyan-text" />
+                    <LuEye className="w-3.5 h-3.5 theme-cyan-text flex-shrink-0" />
                     <span>{isId ? "Detail Proyek" : "Case Details"}</span>
                   </button>
 
@@ -904,9 +897,9 @@ export default function ProjectsSection({
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${proj.name} GitHub`}
-                    className="py-2 px-3 rounded-xl surface-pill hover:border-cyan-500/40 text-xs font-semibold theme-body hover:theme-heading inline-flex items-center gap-1.5 transition-all"
+                    className="py-2 px-3 rounded-xl surface-pill hover:border-[var(--border-accent)] text-xs font-semibold theme-body hover:theme-heading inline-flex items-center gap-1.5 transition-all"
                   >
-                    <FaGithub className="w-3.5 h-3.5" />
+                    <FaGithub className="w-3.5 h-3.5 flex-shrink-0" />
                     <span>Code</span>
                   </a>
                 </div>

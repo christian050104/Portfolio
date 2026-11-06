@@ -11,7 +11,6 @@ import {
   LuShieldCheck,
   LuLayers,
   LuCpu,
-  LuSparkles,
 } from "react-icons/lu";
 import { useAppPreferences, CONTACT_EMAIL } from "@/context/AppPreferencesContext";
 import TechIcon from "@/components/ui/TechIcon";
@@ -95,31 +94,31 @@ export default function HeroSection() {
   return (
     <section
       id="home"
-      className="relative pt-28 pb-12 md:pt-36 md:pb-20 overflow-hidden"
+      className="relative pt-24 pb-10 sm:pt-28 sm:pb-12 md:pt-36 md:pb-20 overflow-hidden"
     >
-      {/* Subtle Grid & Ambient Glows */}
+      {/* Subtle Grid & Restrained Ambient Glow */}
       <div className="absolute inset-0 -z-10 bg-grid-pattern pointer-events-none" />
       <div
-        className="absolute -top-24 -left-24 w-[480px] h-[480px] rounded-full opacity-20 blur-3xl -z-10 pointer-events-none"
-        style={{ background: "radial-gradient(circle, #06b6d4 0%, transparent 70%)" }}
+        className="absolute -top-28 -left-28 w-[420px] h-[420px] rounded-full opacity-10 blur-3xl -z-10 pointer-events-none"
+        style={{ background: "radial-gradient(circle, #2563eb 0%, transparent 70%)" }}
       />
       <div
-        className="absolute top-1/4 -right-24 w-[460px] h-[460px] rounded-full opacity-15 blur-3xl -z-10 pointer-events-none"
-        style={{ background: "radial-gradient(circle, #8b5cf6 0%, transparent 70%)" }}
+        className="absolute top-1/4 -right-28 w-[400px] h-[400px] rounded-full opacity-10 blur-3xl -z-10 pointer-events-none"
+        style={{ background: "radial-gradient(circle, #475569 0%, transparent 70%)" }}
       />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-12">
         {/* Main 2-Column Executive Layout */}
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
           {/* Left Column: Pitch & Actions */}
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left animate-hero-1">
+          <div className="lg:col-span-7 min-w-0 space-y-5 sm:space-y-6 text-center lg:text-left animate-hero-1">
             {/* Availability Pill */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
-              <span className="relative flex h-2.5 w-2.5">
+            <div className="inline-flex items-center gap-2.5 px-3.5 sm:px-4 py-1.5 rounded-full status-soft max-w-full">
+              <span className="relative flex h-2 w-2 flex-shrink-0">
                 <span className="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-              <span className="text-xs font-semibold theme-emerald-text">
+              <span className="text-[11px] sm:text-xs font-semibold leading-snug text-left">
                 {isId
                   ? "Aktif sebagai IT Engineer (R&D) · Terbuka untuk Peluang Baru"
                   : "IT Engineer (R&D) · Open to New Opportunities"}
@@ -127,20 +126,20 @@ export default function HeroSection() {
             </div>
 
             {/* Name & Dynamic Role */}
-            <div className="space-y-3">
-              <p className="text-xs sm:text-sm font-mono-code font-medium theme-cyan-text tracking-wide uppercase">
+            <div className="space-y-2.5 sm:space-y-3 min-w-0">
+              <p className="text-[11px] sm:text-sm font-mono-code font-semibold theme-cyan-text tracking-wide uppercase">
                 {isId
                   ? "IT Engineer · Divisi Riset dan Pengembangan"
                   : "IT Engineer · Research & Development Division"}
               </p>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold theme-heading leading-[1.12] tracking-tight">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold theme-heading leading-[1.14] tracking-tight break-words">
                 Christian Jhon{" "}
-                <span className="block shimmer-text mt-1">Pranata Panjaitan</span>
+                <span className="block theme-heading mt-0.5 sm:mt-1">Pranata Panjaitan</span>
               </h1>
 
-              <div className="flex items-center justify-center lg:justify-start gap-2 text-base sm:text-xl font-semibold h-8">
-                <span className="font-mono-code theme-cyan-text">&gt;</span>
-                <span className="theme-body font-mono-code">
+              <div className="flex items-center justify-center lg:justify-start gap-2 text-xs sm:text-base md:text-lg font-medium min-h-[1.75rem] max-w-full overflow-hidden">
+                <span className="font-mono-code theme-cyan-text flex-shrink-0">&gt;</span>
+                <span className="theme-muted font-mono-code truncate">
                   {displayed}
                   <span className="animate-blink theme-cyan-text ml-0.5">|</span>
                 </span>
@@ -157,7 +156,10 @@ export default function HeroSection() {
                   </span>{" "}
                   — mulai dari AI pengenalan wajah pada perangkat{" "}
                   <span className="font-semibold theme-heading">IFP</span>, studio live streaming
-                  pada <span className="font-semibold theme-heading">Video Wall & Paperless Conference</span>{" "}
+                  pada{" "}
+                  <span className="font-semibold theme-heading">
+                    Video Wall & Paperless Conference
+                  </span>{" "}
                   (UPN Surabaya), hingga platform EdTech desktop dan aplikasi web/mobile.
                 </>
               ) : (
@@ -178,32 +180,32 @@ export default function HeroSection() {
             </p>
 
             {/* Primary CTA Buttons */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-center lg:justify-start gap-2.5 sm:gap-3 pt-1">
               <a
                 href="#featured"
-                className="btn-primary px-6 py-3.5 text-sm inline-flex items-center gap-2"
+                className="btn-primary px-6 py-3 sm:py-3.5 text-xs sm:text-sm inline-flex items-center justify-center gap-2"
               >
                 <span>{isId ? "Lihat Karya Unggulan" : "Explore Flagship Work"}</span>
-                <LuArrowRight className="w-4 h-4" />
+                <LuArrowRight className="w-4 h-4 flex-shrink-0" />
               </a>
 
               <button
                 onClick={openResume}
-                className="btn-secondary px-5 py-3.5 text-sm inline-flex items-center gap-2 cursor-pointer"
+                className="btn-secondary px-5 py-3 sm:py-3.5 text-xs sm:text-sm inline-flex items-center justify-center gap-2 cursor-pointer"
               >
-                <LuFileText className="w-4 h-4 theme-cyan-text" />
+                <LuFileText className="w-4 h-4 theme-cyan-text flex-shrink-0" />
                 <span>{isId ? "Lihat / Unduh CV" : "View / Download CV"}</span>
               </button>
 
               <button
                 onClick={copyEmail}
                 title={CONTACT_EMAIL}
-                className="surface-pill hover:border-cyan-500/40 px-4 py-3.5 rounded-2xl text-xs sm:text-sm font-medium theme-body hover:theme-heading inline-flex items-center gap-2 transition-all cursor-pointer"
+                className="surface-pill hover:border-[var(--border-accent)] px-4 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm font-semibold theme-body hover:theme-heading inline-flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
                 {emailCopied ? (
-                  <LuCheck className="w-4 h-4 text-emerald-500" />
+                  <LuCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                 ) : (
-                  <LuCopy className="w-4 h-4 theme-cyan-text" />
+                  <LuCopy className="w-4 h-4 theme-cyan-text flex-shrink-0" />
                 )}
                 <span>
                   {emailCopied
@@ -218,24 +220,24 @@ export default function HeroSection() {
             </div>
 
             {/* Social Links Row */}
-            <div className="flex items-center justify-center lg:justify-start gap-3 pt-1">
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-2.5 pt-1">
               <span className="text-xs theme-faint font-medium">
                 {isId ? "Profil Resmi:" : "Connect:"}
               </span>
               {[
                 {
                   href: "https://github.com/christian050104",
-                  icon: <FaGithub className="w-4 h-4" />,
+                  icon: <FaGithub className="w-4 h-4 flex-shrink-0" />,
                   label: "GitHub",
                 },
                 {
                   href: "https://www.linkedin.com/in/christian-jhon-pranata-panjaitan-513364267/",
-                  icon: <FaLinkedin className="w-4 h-4" />,
+                  icon: <FaLinkedin className="w-4 h-4 flex-shrink-0" />,
                   label: "LinkedIn",
                 },
                 {
                   href: "https://www.instagram.com/rexorion__/",
-                  icon: <FaInstagram className="w-4 h-4" />,
+                  icon: <FaInstagram className="w-4 h-4 flex-shrink-0" />,
                   label: "Instagram",
                 },
               ].map((social) => (
@@ -245,7 +247,7 @@ export default function HeroSection() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl surface-subtle text-xs font-medium theme-muted hover:theme-cyan-text hover:border-cyan-500/35 transition-all"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl surface-subtle text-xs font-medium theme-body hover:theme-cyan-text hover:border-[var(--border-accent)] transition-all"
                 >
                   {social.icon}
                   <span>{social.label}</span>
@@ -255,38 +257,38 @@ export default function HeroSection() {
           </div>
 
           {/* Right Column: Executive Bento Portrait & Tech Card */}
-          <div className="lg:col-span-5 animate-hero-2">
-            <div className="relative mx-auto max-w-md bento-card rounded-3xl p-5 sm:p-6 space-y-5">
+          <div className="lg:col-span-5 min-w-0 animate-hero-2">
+            <div className="relative mx-auto w-full max-w-md bento-card rounded-3xl p-4 sm:p-6 space-y-5">
               {/* Top Mini Status Header */}
-              <div className="flex items-center justify-between gap-2 pb-3 border-b border-[var(--border-subtle)]">
-                <div className="flex items-center gap-2">
-                  <LuShieldCheck className="w-4 h-4 text-emerald-500" />
-                  <span className="text-xs font-semibold theme-heading">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[var(--border-subtle)]">
+                <div className="flex items-center gap-2 min-w-0">
+                  <LuShieldCheck className="w-4 h-4 theme-cyan-text flex-shrink-0" />
+                  <span className="text-xs font-semibold theme-heading truncate">
                     {isId ? "IT Engineer · Divisi R&D" : "IT Engineer · R&D Division"}
                   </span>
                 </div>
-                <span className="text-[11px] font-mono-code theme-cyan-text px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/20">
+                <span className="text-[11px] font-mono-code accent-soft px-2.5 py-0.5 rounded-full flex-shrink-0">
                   {isId ? "Okt 2025 – Sekarang" : "Oct 2025 – Present"}
                 </span>
               </div>
 
               {/* Portrait Container */}
               <div className="relative flex flex-col items-center">
-                <div className="relative w-44 h-44 sm:w-52 sm:h-52 rounded-3xl overflow-hidden border-2 border-cyan-500/30 shadow-2xl">
+                <div className="relative w-40 h-40 sm:w-52 sm:h-52 rounded-3xl overflow-hidden border border-[var(--border-strong)] shadow-xl">
                   <Image
                     src="/jhon.jpeg"
                     alt="Christian Jhon Pranata Panjaitan"
                     fill
-                    sizes="(max-width: 768px) 176px, 208px"
+                    sizes="(max-width: 768px) 160px, 208px"
                     className="object-cover object-[center_15%]"
                     priority
                   />
                 </div>
 
                 {/* Floating Highlight Pill */}
-                <div className="-mt-4 relative z-10 px-4 py-1.5 rounded-full surface-modal shadow-lg flex items-center gap-2">
-                  <LuSparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="text-xs font-bold theme-heading">
+                <div className="-mt-4 relative z-10 px-3.5 py-1.5 rounded-full surface-modal shadow-md flex items-center gap-2 max-w-full">
+                  <LuCheck className="w-3.5 h-3.5 theme-cyan-text flex-shrink-0" />
+                  <span className="text-xs font-bold theme-heading truncate">
                     {isId ? "Siap Kontribusi Cepat" : "Fast Onboarding & Delivery"}
                   </span>
                 </div>
@@ -297,14 +299,14 @@ export default function HeroSection() {
                 <p className="text-[11px] font-semibold uppercase tracking-wider theme-muted text-center">
                   {isId ? "Teknologi Inti Produksi" : "Primary Production Stack"}
                 </p>
-                <div className="flex flex-wrap justify-center gap-2">
+                <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
                   {CORE_BADGES.map((tech) => (
                     <span
                       key={tech}
                       className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl surface-subtle text-xs font-semibold theme-heading"
                     >
-                      <TechIcon name={tech} className="w-3.5 h-3.5" />
-                      {tech}
+                      <TechIcon name={tech} className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span>{tech}</span>
                     </span>
                   ))}
                 </div>
@@ -312,8 +314,8 @@ export default function HeroSection() {
 
               {/* End-to-End Scope Footnote */}
               <div className="grid grid-cols-2 gap-2.5 pt-1">
-                <div className="p-3 rounded-2xl surface-subtle flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-cyan-500/15 flex items-center justify-center theme-cyan-text flex-shrink-0">
+                <div className="p-2.5 sm:p-3 rounded-2xl surface-subtle flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-xl accent-soft flex items-center justify-center flex-shrink-0">
                     <LuLayers className="w-4 h-4" />
                   </div>
                   <div className="min-w-0">
@@ -321,8 +323,8 @@ export default function HeroSection() {
                     <p className="text-[11px] theme-muted truncate">UI · API · DB</p>
                   </div>
                 </div>
-                <div className="p-3 rounded-2xl surface-subtle flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-violet-500/15 flex items-center justify-center theme-violet-text flex-shrink-0">
+                <div className="p-2.5 sm:p-3 rounded-2xl surface-subtle flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-xl accent-soft flex items-center justify-center flex-shrink-0">
                     <LuCpu className="w-4 h-4" />
                   </div>
                   <div className="min-w-0">
@@ -336,17 +338,17 @@ export default function HeroSection() {
         </div>
 
         {/* Recruiter Impact Metrics Bar */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-hero-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 animate-hero-3">
           {metrics.map((m) => (
             <div
               key={m.label}
-              className="bento-card bento-card-interactive rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-1"
+              className="bento-card bento-card-interactive rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-1 min-w-0"
             >
-              <span className="text-2xl sm:text-3xl font-extrabold font-display gradient-text-cyan">
+              <span className="text-2xl sm:text-3xl font-extrabold font-display theme-heading">
                 {m.value}
               </span>
-              <p className="text-xs sm:text-sm font-bold theme-heading mt-1">{m.label}</p>
-              <p className="text-[11px] sm:text-xs theme-muted">{m.sub}</p>
+              <p className="text-xs sm:text-sm font-bold theme-heading mt-1 leading-snug">{m.label}</p>
+              <p className="text-[11px] sm:text-xs theme-muted leading-snug">{m.sub}</p>
             </div>
           ))}
         </div>

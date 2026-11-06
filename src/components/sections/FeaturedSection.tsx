@@ -84,23 +84,16 @@ export default function FeaturedSection({
   };
 
   return (
-    <section id="featured" className="space-y-10">
+    <section id="featured" className="space-y-8 sm:space-y-10 w-full min-w-0">
       {/* Header */}
       <div className="reveal text-center space-y-3">
         <p className="theme-cyan-text text-xs font-mono-code font-semibold tracking-widest uppercase">
           {isId ? "Studi Kasus Utama" : "Flagship Case Studies"}
         </p>
-        <h2 className="text-3xl md:text-4xl font-extrabold theme-heading">
-          {isId ? (
-            <>
-              Sistem Produksi Unggulan yang{" "}
-              <span className="gradient-text-cyan">Mewakili Kualitas Rekayasa</span> Saya
-            </>
-          ) : (
-            <>
-              Flagship Systems <span className="gradient-text-cyan">Architected End-to-End</span>
-            </>
-          )}
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold theme-heading">
+          {isId
+            ? "Sistem Produksi Unggulan yang Mewakili Kualitas Rekayasa Saya"
+            : "Flagship Systems Architected End-to-End"}
         </h2>
         <p className="theme-muted text-sm max-w-2xl mx-auto">
           {isId
@@ -110,8 +103,8 @@ export default function FeaturedSection({
         <div className="section-divider" />
       </div>
 
-      {/* Flagship Selector Tabs */}
-      <div className="reveal flex flex-wrap justify-center gap-2.5 sm:gap-3">
+      {/* Flagship Selector Tabs — 2x2 Grid on Mobile, Flex Row on Tablet/Desktop */}
+      <div className="reveal grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-2 sm:gap-3">
         {featuredList.map((proj, i) => {
           const Icon = PROJECT_ICONS[proj.id] ?? LuScanFace;
           const isSelected = i === activeIdx;
@@ -120,22 +113,25 @@ export default function FeaturedSection({
             <button
               key={proj.id}
               onClick={() => handleSelectProject(i)}
-              className={`inline-flex items-center gap-2.5 px-4 sm:px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+              className={`min-w-0 inline-flex items-center justify-between sm:justify-center gap-2 px-3 sm:px-5 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                 isSelected
-                  ? "btn-primary shadow-xl scale-[1.02]"
+                  ? "btn-primary shadow-md"
                   : "bento-card theme-body hover:theme-heading"
               }`}
             >
-              <Icon className="w-4 h-4" />
-              <span>{shortTabName}</span>
+              <span className="inline-flex items-center gap-2 min-w-0">
+                <Icon className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">{shortTabName}</span>
+              </span>
               <span
-                className={`text-[11px] font-mono-code px-2 py-0.5 rounded-full ${
+                className={`text-[10px] sm:text-[11px] font-mono-code px-1.5 sm:px-2 py-0.5 rounded-full flex-shrink-0 ${
                   isSelected
                     ? "bg-white/20 text-white"
                     : "surface-subtle theme-muted"
                 }`}
               >
-                {proj.images.length} {isId ? "Layar" : "Screens"}
+                {proj.images.length}
+                <span className="hidden md:inline"> {isId ? "Layar" : "Screens"}</span>
               </span>
             </button>
           );
@@ -143,55 +139,55 @@ export default function FeaturedSection({
       </div>
 
       {/* Main Case Study Bento Card */}
-      <div className="reveal bento-card rounded-3xl overflow-hidden">
-        <div className="grid lg:grid-cols-12">
+      <div className="reveal bento-card rounded-3xl w-full max-w-full overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12">
           {/* Left 6 Cols: Narrative, Challenge/Solution, Features & Stack */}
-          <div className="lg:col-span-6 p-6 sm:p-8 md:p-9 space-y-5 flex flex-col justify-between">
-            <div className="space-y-5">
+          <div className="lg:col-span-6 min-w-0 p-5 sm:p-8 md:p-9 space-y-5 flex flex-col justify-between">
+            <div className="space-y-5 min-w-0">
               {/* Top Meta Badges */}
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/12 theme-cyan-text border border-cyan-500/25">
+                <span className="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold accent-soft">
                   {active.category}
                 </span>
-                <span className="px-3 py-1 rounded-full text-xs font-medium surface-subtle theme-body">
+                <span className="px-2.5 py-1 rounded-xl sm:rounded-full text-[11px] sm:text-xs font-medium surface-subtle theme-body leading-snug max-w-full break-words">
                   {active.impactBadge[locale]}
                 </span>
-                <span className="text-xs font-mono-code theme-muted ml-auto">
+                <span className="text-xs font-mono-code theme-muted sm:ml-auto">
                   {active.year}
                 </span>
               </div>
 
               {/* Title & Role */}
-              <div>
-                <h3 className="text-2xl sm:text-3xl font-extrabold theme-heading">
+              <div className="min-w-0">
+                <h3 className="text-2xl sm:text-3xl font-extrabold theme-heading break-words">
                   {active.name}
                 </h3>
-                <p className="text-xs sm:text-sm font-semibold theme-cyan-text mt-1">
+                <p className="text-xs sm:text-sm font-medium theme-muted mt-1">
                   {active.role[locale]}
                 </p>
               </div>
 
               {/* Description */}
-              <p className="text-sm theme-body leading-relaxed">
+              <p className="text-sm theme-body leading-relaxed break-words">
                 {active.description[locale]}
               </p>
 
-              {/* Challenge & Solution Boxes */}
+              {/* Challenge & Solution Boxes — Clean Editorial Hierarchy */}
               {active.challenge && active.solution && (
-                <div className="grid sm:grid-cols-2 gap-3">
-                  <div className="p-3.5 rounded-2xl surface-subtle space-y-1">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-amber-500">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="p-3.5 rounded-2xl surface-subtle border-l-2 border-l-slate-400 space-y-1 min-w-0">
+                    <p className="text-[11px] font-bold uppercase tracking-wider theme-muted">
                       {isId ? "Tantangan" : "The Challenge"}
                     </p>
-                    <p className="text-xs theme-body leading-relaxed">
+                    <p className="text-xs theme-body leading-relaxed break-words">
                       {active.challenge[locale]}
                     </p>
                   </div>
-                  <div className="p-3.5 rounded-2xl surface-subtle space-y-1">
-                    <p className="text-[11px] font-bold uppercase tracking-wider theme-emerald-text">
+                  <div className="p-3.5 rounded-2xl surface-subtle border-l-2 border-l-[var(--accent-cyan)] space-y-1 min-w-0">
+                    <p className="text-[11px] font-bold uppercase tracking-wider theme-cyan-text">
                       {isId ? "Solusi Arsitektur" : "Engineering Solution"}
                     </p>
-                    <p className="text-xs theme-body leading-relaxed">
+                    <p className="text-xs theme-body leading-relaxed break-words">
                       {active.solution[locale]}
                     </p>
                   </div>
@@ -199,22 +195,22 @@ export default function FeaturedSection({
               )}
 
               {/* Key Capabilities */}
-              <div className="space-y-2">
+              <div className="space-y-2 min-w-0">
                 <h4 className="text-xs font-bold uppercase tracking-wider theme-muted">
                   {isId ? "Kapabilitas Utama" : "Key Capabilities"}
                 </h4>
-                <ul className="space-y-1.5">
+                <ul className="space-y-2">
                   {active.highlights[locale].map((h) => (
                     <li key={h} className="flex items-start gap-2.5 text-xs sm:text-sm theme-body">
-                      <LuCircleCheck className="w-4 h-4 theme-emerald-text flex-shrink-0 mt-0.5" />
-                      <span>{h}</span>
+                      <LuCircleCheck className="w-4 h-4 theme-cyan-text flex-shrink-0 mt-0.5" />
+                      <span className="break-words">{h}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
               {/* Tech Stack */}
-              <div className="space-y-2">
+              <div className="space-y-2 min-w-0">
                 <h4 className="text-xs font-bold uppercase tracking-wider theme-muted">
                   Tech Stack
                 </h4>
@@ -224,8 +220,8 @@ export default function FeaturedSection({
                       key={t}
                       className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl surface-subtle text-xs font-semibold theme-heading"
                     >
-                      <TechIcon name={t} className="w-3.5 h-3.5" />
-                      {t}
+                      <TechIcon name={t} className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span>{t}</span>
                     </span>
                   ))}
                 </div>
@@ -233,12 +229,12 @@ export default function FeaturedSection({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-[var(--border-subtle)]">
+            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3 pt-4 border-t border-[var(--border-subtle)]">
               <button
                 onClick={() => setLightboxOpen(true)}
-                className="btn-primary px-5 py-2.5 text-xs sm:text-sm inline-flex items-center gap-2 cursor-pointer"
+                className="btn-primary px-5 py-2.5 text-xs sm:text-sm inline-flex items-center justify-center gap-2 cursor-pointer"
               >
-                <LuMaximize2 className="w-4 h-4" />
+                <LuMaximize2 className="w-4 h-4 flex-shrink-0" />
                 <span>
                   {isId
                     ? `Buka Galeri Penuh (${active.images.length} Layar)`
@@ -250,30 +246,30 @@ export default function FeaturedSection({
                 href={active.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-secondary px-4 py-2.5 text-xs sm:text-sm inline-flex items-center gap-2"
+                className="btn-secondary px-4 py-2.5 text-xs sm:text-sm inline-flex items-center justify-center gap-2"
               >
-                <FaGithub className="w-4 h-4" />
+                <FaGithub className="w-4 h-4 flex-shrink-0" />
                 <span>GitHub</span>
-                <LuExternalLink className="w-3.5 h-3.5" />
+                <LuExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
               </a>
             </div>
           </div>
 
           {/* Right 6 Cols: Adaptive Web / Mobile Screenshot Explorer */}
-          <div className="lg:col-span-6 p-6 sm:p-8 bg-[var(--bg-secondary)] border-t lg:border-t-0 lg:border-l border-[var(--border-subtle)] flex flex-col justify-between gap-4">
-            {/* Dual-Platform Mode Switcher (Shown when project has both Website & Mobile screens!) */}
-            <div className="space-y-3">
+          <div className="lg:col-span-6 min-w-0 p-5 sm:p-8 bg-[var(--bg-secondary)] border-t lg:border-t-0 lg:border-l border-[var(--border-subtle)] flex flex-col justify-between gap-4">
+            {/* Dual-Platform Mode Switcher */}
+            <div className="space-y-3 min-w-0">
               {isDualPlatform && (
-                <div className="flex items-center justify-between gap-2 p-1.5 rounded-2xl surface-subtle">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5 p-1.5 rounded-2xl surface-subtle">
                   <button
                     onClick={() => handleSelectPlatform("web")}
                     className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold inline-flex items-center justify-center gap-2 transition-all cursor-pointer ${
                       platformMode === "web"
-                        ? "btn-primary shadow-md"
+                        ? "btn-primary shadow-sm"
                         : "theme-muted hover:theme-heading"
                     }`}
                   >
-                    <LuMonitor className="w-4 h-4" />
+                    <LuMonitor className="w-4 h-4 flex-shrink-0" />
                     <span>{isId ? "Versi Website" : "Website Version"}</span>
                     <span className="font-mono-code text-[11px] opacity-85">
                       ({webImages.length})
@@ -284,11 +280,11 @@ export default function FeaturedSection({
                     onClick={() => handleSelectPlatform("mobile")}
                     className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold inline-flex items-center justify-center gap-2 transition-all cursor-pointer ${
                       platformMode === "mobile"
-                        ? "btn-primary shadow-md"
+                        ? "btn-primary shadow-sm"
                         : "theme-muted hover:theme-heading"
                     }`}
                   >
-                    <LuSmartphone className="w-4 h-4" />
+                    <LuSmartphone className="w-4 h-4 flex-shrink-0" />
                     <span>{isId ? "Versi Mobile (Flutter)" : "Mobile App (Flutter)"}</span>
                     <span className="font-mono-code text-[11px] opacity-85">
                       ({mobileImages.length})
@@ -298,7 +294,7 @@ export default function FeaturedSection({
               )}
 
               {/* Window / Device Bar */}
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center justify-between gap-2 min-w-0">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80 flex-shrink-0" />
                   <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80 flex-shrink-0" />
@@ -317,7 +313,7 @@ export default function FeaturedSection({
             {isDualPlatform && platformMode === "mobile" ? (
               <div
                 onClick={() => setLightboxOpen(true)}
-                className="group relative w-full h-[360px] sm:h-[390px] rounded-2xl overflow-hidden border border-[var(--border-strong)] bg-gradient-to-br from-slate-950 via-indigo-950/50 to-slate-900 shadow-xl cursor-zoom-in flex items-center justify-center gap-5 px-6 py-4"
+                className="group relative w-full h-[300px] sm:h-[380px] rounded-2xl overflow-hidden border border-[var(--border-strong)] bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 shadow-xl cursor-zoom-in flex items-center justify-center gap-5 px-4 sm:px-6 py-4"
               >
                 {/* Primary Active Mobile Phone */}
                 <div className="relative h-full flex items-center justify-center z-10 transition-transform duration-300 group-hover:scale-[1.03]">
@@ -325,7 +321,7 @@ export default function FeaturedSection({
                   <img
                     src={encodeAssetPath(currentSrc)}
                     alt={`${active.name} — ${formatScreenshotCaption(currentSrc)}`}
-                    className="h-full w-auto object-contain drop-shadow-[0_18px_35px_rgba(6,182,212,0.28)]"
+                    className="h-full w-auto object-contain drop-shadow-[0_18px_35px_rgba(0,0,0,0.65)]"
                   />
                 </div>
 
@@ -349,8 +345,8 @@ export default function FeaturedSection({
                 )}
 
                 {/* Hover Zoom Pill */}
-                <div className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/80 backdrop-blur-md border border-white/15 text-white text-xs font-medium flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                  <LuMaximize2 className="w-3.5 h-3.5 text-cyan-400" />
+                <div className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/80 backdrop-blur-md border border-white/15 text-white text-xs font-medium hidden sm:flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                  <LuMaximize2 className="w-3.5 h-3.5 text-blue-400" />
                   <span>{isId ? "Perbesar Mobile" : "Zoom Mobile"}</span>
                 </div>
 
@@ -361,7 +357,7 @@ export default function FeaturedSection({
                     prevScreen();
                   }}
                   aria-label="Previous mobile screen"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-slate-950/80 hover:bg-cyan-600 text-white border border-white/15 flex items-center justify-center transition-colors cursor-pointer z-20"
+                  className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-950/80 hover:bg-[var(--accent-cyan)] text-white border border-white/15 flex items-center justify-center transition-colors cursor-pointer z-20"
                 >
                   <LuChevronLeft className="w-4 h-4" />
                 </button>
@@ -371,7 +367,7 @@ export default function FeaturedSection({
                     nextScreen();
                   }}
                   aria-label="Next mobile screen"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-slate-950/80 hover:bg-cyan-600 text-white border border-white/15 flex items-center justify-center transition-colors cursor-pointer z-20"
+                  className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-950/80 hover:bg-[var(--accent-cyan)] text-white border border-white/15 flex items-center justify-center transition-colors cursor-pointer z-20"
                 >
                   <LuChevronRight className="w-4 h-4" />
                 </button>
@@ -402,8 +398,8 @@ export default function FeaturedSection({
                 })}
 
                 {/* Hover Zoom Badge */}
-                <div className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/75 backdrop-blur-md border border-white/15 text-white text-xs font-medium flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <LuMaximize2 className="w-3.5 h-3.5 text-cyan-400" />
+                <div className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/75 backdrop-blur-md border border-white/15 text-white text-xs font-medium hidden sm:flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <LuMaximize2 className="w-3.5 h-3.5 text-blue-400" />
                   <span>{isId ? "Perbesar Layar" : "View Fullscreen"}</span>
                 </div>
 
@@ -414,7 +410,7 @@ export default function FeaturedSection({
                     prevScreen();
                   }}
                   aria-label="Previous screen"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-slate-950/75 hover:bg-cyan-600 text-white border border-white/15 flex items-center justify-center transition-colors cursor-pointer"
+                  className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-950/75 hover:bg-[var(--accent-cyan)] text-white border border-white/15 flex items-center justify-center transition-colors cursor-pointer"
                 >
                   <LuChevronLeft className="w-4 h-4" />
                 </button>
@@ -424,7 +420,7 @@ export default function FeaturedSection({
                     nextScreen();
                   }}
                   aria-label="Next screen"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-slate-950/75 hover:bg-cyan-600 text-white border border-white/15 flex items-center justify-center transition-colors cursor-pointer"
+                  className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-950/75 hover:bg-[var(--accent-cyan)] text-white border border-white/15 flex items-center justify-center transition-colors cursor-pointer"
                 >
                   <LuChevronRight className="w-4 h-4" />
                 </button>
@@ -432,18 +428,18 @@ export default function FeaturedSection({
             )}
 
             {/* Quick Feature Screen Selector Pills */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-[11px] theme-muted">
-                <span>
+            <div className="space-y-2 min-w-0 max-w-full">
+              <div className="flex items-center justify-between gap-2 text-[11px] theme-muted">
+                <span className="truncate">
                   {isId
-                    ? "Pilih modul layar untuk pratinjau cepat:"
+                    ? "Pilih modul layar untuk pratinjau:"
                     : "Jump directly to a feature screen:"}
                 </span>
-                <span className="font-mono-code theme-cyan-text">
+                <span className="font-mono-code theme-cyan-text flex-shrink-0">
                   {isId ? "Geser →" : "Scroll →"}
                 </span>
               </div>
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 hide-scrollbar">
+              <div className="flex items-center gap-2 w-full overflow-x-auto pb-1 hide-scrollbar">
                 {displayedImages.map((src, i) => {
                   const selected = i === safeScreenIdx;
                   return (
@@ -452,7 +448,7 @@ export default function FeaturedSection({
                       onClick={() => setScreenIdx(i)}
                       className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                         selected
-                          ? "bg-cyan-500/15 theme-cyan-text border border-cyan-500/35 font-semibold"
+                          ? "accent-soft font-semibold"
                           : "surface-pill theme-muted hover:theme-heading"
                       }`}
                     >
