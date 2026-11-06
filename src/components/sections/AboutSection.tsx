@@ -56,7 +56,7 @@ export default function AboutSection() {
     {
       icon: LuCode,
       label: isId ? "Cakupan Rekayasa" : "Engineering Scope",
-      value: "R&D, Fullstack Web, Desktop & AI",
+      value: "Backend, Fullstack Web, Desktop & AI",
     },
     {
       icon: LuMapPin,

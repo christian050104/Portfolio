@@ -27,7 +27,12 @@ import {
   SiGit,
   SiGithub,
   SiBootstrap,
+  SiSpringboot,
+  SiMongodb,
+  SiRedis,
+  SiJenkins,
 } from "react-icons/si";
+import { FaJava } from "react-icons/fa";
 import {
   LuCpu,
   LuGlobe,
@@ -36,6 +41,7 @@ import {
   LuServer,
   LuCode,
   LuLayers,
+  LuRefreshCw,
 } from "react-icons/lu";
 
 export interface TechMeta {
@@ -44,6 +50,9 @@ export interface TechMeta {
 }
 
 const TECH_MAP: Record<string, TechMeta> = {
+  Java: { icon: FaJava, color: "text-red-600 dark:text-orange-400" },
+  "Spring Boot": { icon: SiSpringboot, color: "text-green-600 dark:text-green-500" },
+  "Java Spring Boot": { icon: SiSpringboot, color: "text-green-600 dark:text-green-500" },
   Laravel: { icon: SiLaravel, color: "text-red-500" },
   "Laravel (PHP)": { icon: SiLaravel, color: "text-red-500" },
   Django: { icon: SiDjango, color: "text-emerald-500" },
@@ -77,12 +86,18 @@ const TECH_MAP: Record<string, TechMeta> = {
   HLS: { icon: LuGlobe, color: "theme-cyan-text" },
   PostgreSQL: { icon: SiPostgresql, color: "text-blue-600 dark:text-sky-500" },
   MySQL: { icon: SiMysql, color: "text-blue-600 dark:text-blue-400" },
+  MongoDB: { icon: SiMongodb, color: "text-emerald-600 dark:text-emerald-500" },
+  Redis: { icon: SiRedis, color: "text-red-600 dark:text-red-500" },
   SQLite: { icon: SiSqlite, color: "text-sky-600 dark:text-sky-400" },
   PHP: { icon: SiPhp, color: "text-indigo-600 dark:text-indigo-400" },
   Flask: { icon: SiFlask, color: "theme-heading" },
   Bootstrap: { icon: SiBootstrap, color: "text-purple-600 dark:text-purple-500" },
   "REST API": { icon: LuServer, color: "theme-cyan-text" },
+  "RESTful API": { icon: LuServer, color: "theme-cyan-text" },
   "REST API Design": { icon: LuServer, color: "theme-cyan-text" },
+  "Jenkins (CI/CD)": { icon: SiJenkins, color: "text-rose-600 dark:text-rose-400" },
+  Jenkins: { icon: SiJenkins, color: "text-rose-600 dark:text-rose-400" },
+  "Agile / Scrum": { icon: LuRefreshCw, color: "theme-cyan-text" },
   "Git & GitHub": { icon: SiGit, color: "text-orange-500" },
   GitHub: { icon: SiGithub, color: "theme-heading" },
   "Cross-Platform Apps": { icon: LuLayers, color: "theme-cyan-text" },

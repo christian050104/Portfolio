@@ -18,19 +18,27 @@ import TechIcon from "@/components/ui/TechIcon";
 const ROLES_BY_LOCALE = {
   id: [
     "IT Engineer — Riset & Pengembangan",
-    "Fullstack Software Engineer",
+    "Backend & Fullstack Software Engineer",
     "AI & Computer Vision Builder",
     "Cross-Platform Desktop Architect",
   ],
   en: [
     "IT Engineer — Research & Development",
-    "Fullstack Software Engineer",
+    "Backend & Fullstack Software Engineer",
     "AI & Computer Vision Builder",
     "Cross-Platform Desktop Architect",
   ],
 };
 
-const CORE_BADGES = ["Laravel", "Django", "React.js", "Electron", "Flutter", "Python"];
+const CORE_BADGES = [
+  "Spring Boot",
+  "Laravel",
+  "Django",
+  "React.js",
+  "Electron",
+  "Flutter",
+  "Python",
+];
 
 export default function HeroSection() {
   const { locale, openResume, copyEmail, emailCopied } = useAppPreferences();

@@ -45,8 +45,8 @@ export default function SkillsSection() {
         </h2>
         <p className="theme-muted text-sm max-w-2xl mx-auto">
           {isId
-            ? "Setiap teknologi di bawah ini telah diimplementasikan langsung ke dalam sistem yang berjalan — bukan sekadar daftar teori."
-            : "Every technology below is backed by real shipped modules — giving engineering teams confidence from day one."}
+            ? "Cakupan teknologi yang saya terapkan dalam membangun layanan backend yang scalable, pengelolaan database SQL/NoSQL, aplikasi lintas platform, hingga alur rilis CI/CD."
+            : "Technologies and workflows I apply across scalable backend services, SQL/NoSQL databases, cross-platform applications, and Agile CI/CD delivery."}
         </p>
         <div className="section-divider" />
       </div>
@@ -159,7 +159,7 @@ export default function SkillsSection() {
 
                         <p className="text-[11px] theme-muted leading-snug line-clamp-2 sm:truncate">
                           <span className="theme-faint">
-                            {isId ? "Digunakan:" : "Proven in:"}
+                            {isId ? "Fokus:" : "Focus:"}
                           </span>{" "}
                           {skill.usedIn}
                         </p>

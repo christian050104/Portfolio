@@ -25,11 +25,21 @@ export const SKILL_CATEGORIES: SkillCategoryItem[] = [
       en: "Backend & API Architecture",
     },
     description: {
-      id: "Membangun layanan server yang aman, terstruktur, dan siap menangani data relasional maupun komunikasi layanan.",
-      en: "Designing structured, secure server architectures, relational schemas, and clean RESTful APIs.",
+      id: "Merancang layanan server yang scalable, aman, dan testable — mencakup integrasi RESTful API, analisis sistem, optimasi performa, serta debugging.",
+      en: "Designing scalable, testable, and secure server-side applications — covering RESTful API integration, software analysis, performance optimization, and debugging.",
     },
     accent: "emerald",
     skills: [
+      {
+        name: "Java",
+        tier: { id: "Stack Utama", en: "Core Stack" },
+        usedIn: "OOP & Enterprise Backend",
+      },
+      {
+        name: "Spring Boot",
+        tier: { id: "Stack Utama", en: "Core Stack" },
+        usedIn: "RESTful API & Backend Services",
+      },
       {
         name: "Laravel",
         tier: { id: "Stack Utama", en: "Core Stack" },
@@ -38,7 +48,7 @@ export const SKILL_CATEGORIES: SkillCategoryItem[] = [
       {
         name: "Django",
         tier: { id: "Stack Utama", en: "Core Stack" },
-        usedIn: "FaceLog AI, Monitoring Sapi",
+        usedIn: "FaceLog AI, DairyTrack",
       },
       {
         name: "Express.js",
@@ -56,9 +66,9 @@ export const SKILL_CATEGORIES: SkillCategoryItem[] = [
         usedIn: "Python ML & Micro-APIs",
       },
       {
-        name: "REST API",
+        name: "RESTful API",
         tier: { id: "Stack Utama", en: "Core Stack" },
-        usedIn: "Semua Proyek Fullstack",
+        usedIn: "System Integration & Auth",
       },
     ],
   },
@@ -182,44 +192,59 @@ export const SKILL_CATEGORIES: SkillCategoryItem[] = [
   {
     id: "mobile-db",
     label: {
-      id: "Mobile, Database & Workflow",
-      en: "Mobile, Databases & Tooling",
+      id: "Database (SQL/NoSQL), CI/CD & Mobile",
+      en: "SQL/NoSQL Databases, CI/CD & Mobile",
     },
     description: {
-      id: "Aplikasi mobile lintas platform serta perancangan skema database relasional untuk online maupun offline.",
-      en: "Cross-platform mobile apps and reliable relational data storage across cloud and offline environments.",
+      id: "Pengelolaan database relasional (SQL) & dokumen/in-memory (NoSQL), otomatisasi pipeline CI/CD (Jenkins & Git), metodologi Agile/Scrum, serta aplikasi mobile.",
+      en: "Relational (SQL) & document/in-memory (NoSQL) databases, CI/CD pipeline automation (Jenkins & Git), Agile/Scrum workflows, and cross-platform mobile apps.",
     },
     accent: "rose",
     skills: [
       {
-        name: "Flutter",
-        tier: { id: "Siap Produksi", en: "Production" },
-        usedIn: "Monitoring Kesehatan Sapi",
-      },
-      {
-        name: "Dart",
-        tier: { id: "Siap Produksi", en: "Production" },
-        usedIn: "Flutter Mobile Apps",
-      },
-      {
         name: "PostgreSQL",
         tier: { id: "Stack Utama", en: "Core Stack" },
-        usedIn: "FaceLog, Monitoring Sapi",
+        usedIn: "SQL · FaceLog, DairyTrack",
       },
       {
         name: "MySQL",
         tier: { id: "Stack Utama", en: "Core Stack" },
-        usedIn: "Labverse, Labtek, Compro AGS",
+        usedIn: "SQL · Labverse, Labtek, AGS",
+      },
+      {
+        name: "MongoDB",
+        tier: { id: "Siap Produksi", en: "Production" },
+        usedIn: "NoSQL Document Database",
+      },
+      {
+        name: "Redis",
+        tier: { id: "Siap Produksi", en: "Production" },
+        usedIn: "NoSQL Caching & Performance",
       },
       {
         name: "SQLite",
         tier: { id: "Siap Produksi", en: "Production" },
-        usedIn: "EduSphere Offline Mode",
+        usedIn: "SQL · EduSphere Offline Mode",
+      },
+      {
+        name: "Jenkins (CI/CD)",
+        tier: { id: "Siap Produksi", en: "Production" },
+        usedIn: "CI/CD Build & Release Pipeline",
       },
       {
         name: "Git & GitHub",
         tier: { id: "Stack Utama", en: "Core Stack" },
-        usedIn: "Version Control & Collaboration",
+        usedIn: "Version Control & Code Review",
+      },
+      {
+        name: "Agile / Scrum",
+        tier: { id: "Stack Utama", en: "Core Stack" },
+        usedIn: "Sprint Lifecycle & Team Collab",
+      },
+      {
+        name: "Flutter",
+        tier: { id: "Siap Produksi", en: "Production" },
+        usedIn: "DairyTrack Mobile (Dart)",
       },
     ],
   },
