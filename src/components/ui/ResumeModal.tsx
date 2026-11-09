@@ -128,8 +128,8 @@ export default function ResumeModal() {
                 </p>
                 <p className="text-xs text-slate-400">
                   {isId
-                    ? "Browser perangkat seluler Anda tidak menampilkan PDF secara langsung. Silakan buka atau unduh file PDF asli di bawah ini."
-                    : "Your mobile browser does not preview PDFs inline. Open or download the full PDF resume below."}
+                    ? "Browser Anda tidak menampilkan PDF secara langsung. Silakan buka atau unduh file PDF asli di bawah ini."
+                    : "Your browser does not preview PDFs inline. Open or download the full PDF resume below."}
                 </p>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-3">
